@@ -7,6 +7,9 @@
         <Authors>ronimizy</Authors>
         <Description>A set of analyzers to check proper rich data model implementation in EntityFrameworkCore at compile-time.</Description>
         <PackageTags>analyzers; EntityFrameworkCore; rich; data; model;</PackageTags>
+        <PackageProjectUrl>https://github.com/ronimizy/RichEntity</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/ronimizy/RichEntity</RepositoryUrl>
+        <RepositoryType>github</RepositoryType>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -29,22 +32,4 @@
         <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
-
-    <Target Name="AddNuGetDlls" BeforeTargets="_GetPackageFiles">
-        <JoinItems Left="@(ResolvedCompileFileDefinitions)" LeftKey="NuGetPackageId" LeftMetadata="*" Right="@(PackageReference)" RightKey="" RightMetadata="*" ItemSpecToUse="Left">
-            <Output TaskParameter="JoinResult" ItemName="_PackagesToPack" />
-        </JoinItems>
-
-        <ItemGroup>
-            <_PackagesToPack Remove="@(_PackagesToPack)" Condition="%(NuGetPackageId) == 'NETStandard.Library'" />
-        </ItemGroup>
-
-        <Message Importance="High" Text="Adding DLLs from the following packages: @(_PackagesToPack->'%(NuGetPackageId)')" />
-
-        <ItemGroup>
-            <None Include="@(_PackagesToPack)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-
-            <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        </ItemGroup>
-    </Target>
 </Project>
