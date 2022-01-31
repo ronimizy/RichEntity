@@ -64,7 +64,7 @@ namespace RichEntity.Analyzers.Analyzers
 
             context.ReportDiagnostic(Diagnostic.Create(
                 Descriptor,
-                argument!.Syntax.GetLocation(),
+                argument?.Syntax.GetLocation() ?? invocationOperation.Syntax.GetLocation(),
                 namedTypeSymbol.GetFullyQualifiedName(),
                 propertyName));
         }
