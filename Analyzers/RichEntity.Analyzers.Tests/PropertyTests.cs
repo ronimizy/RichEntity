@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -130,12 +129,12 @@ namespace RichEntity.Analyzers.Tests
         {
             var compilation = await CompilationBuilder.Build(code, referencesTypes);
             var compilationWithAnalyzers =
-                compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PropertyAnalyzer()));
+                compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
             return (await compilationWithAnalyzers.GetAllDiagnosticsAsync()).ToList();
         }
 
         private static bool CheckDiagnosticAt(Diagnostic diagnostic, int line)
             => diagnostic.Location.GetLineSpan().StartLinePosition.Line == line &&
-               diagnostic.Id.Equals(PropertyAnalyzer.Id);
+               diagnostic.Id.Equals(InvalidStringLiteralMemberNameDeclarationAnalyzer.Id);
     }
 }

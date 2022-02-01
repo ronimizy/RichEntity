@@ -11,10 +11,11 @@ namespace RichEntity.Analyzers.EntityTypeSymbolProviders
         public bool TryGetTypeSymbol(IOperation operation, Compilation compilation, out ITypeSymbol? symbol)
         {
             var modelBuilderType = compilation.GetTypeByMetadataName(FullyQualifiedName);
+
             if (operation is IInvocationOperation invocationOperation &&
-                invocationOperation.Instance is IParameterReferenceOperation parameterReferenceOperation &&
+                invocationOperation.Instance?.Kind is OperationKind.ParameterReference &&
                 invocationOperation.TargetMethod.Name.Equals("Entity") &&
-                (parameterReferenceOperation.Type?.Equals(modelBuilderType) ?? false))
+                (invocationOperation.Instance.Type?.Equals(modelBuilderType) ?? false))
             {
                 symbol = invocationOperation.TargetMethod.TypeArguments.Single();
                 return true;

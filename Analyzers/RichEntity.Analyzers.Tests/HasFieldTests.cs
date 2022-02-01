@@ -133,12 +133,12 @@ namespace RichEntity.Analyzers.Tests
         {
             var compilation = await CompilationBuilder.Build(code, referencesTypes);
             var compilationWithAnalyzers =
-                compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new HasFieldAnalyzer()));
+                compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
             return (await compilationWithAnalyzers.GetAllDiagnosticsAsync()).ToList();
         }
 
         private static bool CheckDiagnosticAt(Diagnostic diagnostic, int line)
             => diagnostic.Location.GetLineSpan().StartLinePosition.Line == line &&
-               diagnostic.Id.Equals(HasFieldAnalyzer.Id);
+               diagnostic.Id.Equals(InvalidStringLiteralMemberNameDeclarationAnalyzer.Id);
     }
 }

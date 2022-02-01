@@ -6,11 +6,12 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>   
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageVersion>0.1.0</PackageVersion>
+        <PackageVersion>0.1.2</PackageVersion>
         <PackageId>RichEntity.Analyzers</PackageId>
         <Title>RichEntity.Analyzers</Title>
         <Authors>ronimizy</Authors>
@@ -22,31 +23,31 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath=""/>
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
     
     <Target Name="AddNuGetDlls" BeforeTargets="_GetPackageFiles">
         <JoinItems Left="@(ResolvedCompileFileDefinitions)" LeftKey="NuGetPackageId" LeftMetadata="*" Right="@(PackageReference)" RightKey="" RightMetadata="*" ItemSpecToUse="Left">
-            <Output TaskParameter="JoinResult" ItemName="_PackagesToPack"/>
+            <Output TaskParameter="JoinResult" ItemName="_PackagesToPack" />
         </JoinItems>
 
         <ItemGroup>
-            <_PackagesToPack Remove="@(_PackagesToPack)" Condition="%(NuGetPackageId) == 'NETStandard.Library'"/>
+            <_PackagesToPack Remove="@(_PackagesToPack)" Condition="%(NuGetPackageId) == 'NETStandard.Library'" />
         </ItemGroup>
 
-        <Message Importance="High" Text="Adding DLLs from the following packages: @(_PackagesToPack->'%(NuGetPackageId)')"/>
+        <Message Importance="High" Text="Adding DLLs from the following packages: @(_PackagesToPack->'%(NuGetPackageId)')" />
 
         <ItemGroup>
-            <None Include="@(_PackagesToPack)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+            <None Include="@(_PackagesToPack)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 
-            <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+            <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
         </ItemGroup>
     </Target>
 </Project>
