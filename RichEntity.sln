@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.Analyzers.Tests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{A74FD586-4C81-41A1-A9F9-E096157315B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.Analyzers.Playground", "Analyzers\RichEntity.Analyzers.Playground\RichEntity.Analyzers.Playground.csproj", "{7E583089-82AF-44F8-89D9-EAFF3764ED0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.Analyzers.Sample", "Analyzers\RichEntity.Analyzers.Sample\RichEntity.Analyzers.Sample.csproj", "{7E583089-82AF-44F8-89D9-EAFF3764ED0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
