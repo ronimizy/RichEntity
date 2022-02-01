@@ -24,5 +24,10 @@
     <ItemGroup>
       <ProjectReference Include="..\RichEntity.Analyzers\RichEntity.Analyzers.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="../RichEntity.Analyzers.Sample/Proper.cs" CopyToOutputDirectory="Always" />
+        <Content Include="../RichEntity.Analyzers.Sample/Invalid.cs" CopyToOutputDirectory="Always" />
+    </ItemGroup>
 
 </Project>
