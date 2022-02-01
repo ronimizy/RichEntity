@@ -19,7 +19,7 @@ https://github.com/ronimizy/RichEntity/blob/7af0edd7e2b2a521dcc9aef161a86b3bacd7
 
 
 ### Description
-The model configuration in the example has `RE1000` diagnostic reported at every string literal. Provided code snippet covers two ways model 
+The model configuration in the example has `RE1000` diagnostic reported at every string literal. Provided code snippet covers two ways of model 
 configuration `ModelBuilder` and `EntityTypebuilder` (both with mistakes). 
 - `"_childrens"` : The literal has a typo an additional `s` at the end.
 - `"name"` / `"father"` : The literals are missing the `_` character at the beginning.
