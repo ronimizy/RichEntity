@@ -4,13 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 #pragma warning disable CS8618
 
-namespace RichEntity.Analyzers.Playground;
+namespace RichEntity.Analyzers.Sample;
 
 public class Invalid
 {
     public class Person
     {
-        private readonly List<Person> _friends;
         private readonly List<Person> _children;
         private readonly Person? _father;
         private readonly string _name;
@@ -18,7 +17,6 @@ public class Invalid
         public Person(string name, Person? father)
         {
             _children = new List<Person>();
-            _friends = new List<Person>();
             _name = name;
             _father = father;
         }
@@ -32,9 +30,6 @@ public class Invalid
 
         public void AddChild(Person person)
             => _children.Add(person);
-
-        public void AddFriend(Person person)
-            => _friends.Add(person);
     }
 
     public class Context : DbContext
@@ -46,7 +41,7 @@ public class Invalid
             modelBuilder.Entity<Person>().Navigation(p => p.Children).HasField("_childrens");
             modelBuilder.Entity<Person>().Property("name");
             modelBuilder.Entity<Person>().HasOne("father");
-            modelBuilder.Entity<Person>().HasMany("friends");
+            modelBuilder.Entity<Person>().HasMany("_friends");
         }
     }
 
@@ -57,7 +52,7 @@ public class Invalid
             builder.Navigation(p => p.Children).HasField("_childrens");
             builder.Property("name");
             builder.HasOne("father");
-            builder.HasMany("friends");
+            builder.HasMany("_friends");
         }
     }
 }
