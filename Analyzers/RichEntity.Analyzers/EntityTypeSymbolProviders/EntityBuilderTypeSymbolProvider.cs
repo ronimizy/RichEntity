@@ -1,6 +1,5 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Operations;
 
 namespace RichEntity.Analyzers.EntityTypeSymbolProviders
 {
@@ -11,7 +10,8 @@ namespace RichEntity.Analyzers.EntityTypeSymbolProviders
         public bool TryGetTypeSymbol(IOperation operation, Compilation compilation, out ITypeSymbol? symbol)
         {
             var entityBuilderType = compilation.GetTypeByMetadataName(FullyQualifiedName);
-            if (operation is IParameterReferenceOperation { Type: INamedTypeSymbol namedTypeSymbol } &&
+            if (operation.Kind is OperationKind.ParameterReference &&
+                operation.Type is INamedTypeSymbol namedTypeSymbol &&
                 (namedTypeSymbol.BaseType?.Equals(entityBuilderType) ?? false))
             {
                 symbol = namedTypeSymbol.TypeArguments.Single();
