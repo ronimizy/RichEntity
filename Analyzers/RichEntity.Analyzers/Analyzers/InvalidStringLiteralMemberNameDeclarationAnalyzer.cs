@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using RichEntity.Analyzers.Extensions;
-using RichEntity.Analyzers.LiteralNameInvocationLocators;
 using RichEntity.Analyzers.LiteralNameInvocationLocators.Base;
 using RichEntity.Analyzers.Utility;
 
@@ -15,7 +13,7 @@ namespace RichEntity.Analyzers.Analyzers
     public sealed class InvalidStringLiteralMemberNameDeclarationAnalyzer : DiagnosticAnalyzer
     {
         public static string Id => "RE1000";
-        public static string Title => "Invalid string literal member name declaration.";
+        public static string Title => "InvalidStringLiteralMemberNameDeclaration";
         public static string Description => "Type \"{0}\" does not contain the definition for {1} called \"{2}\".";
 
         public static DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(

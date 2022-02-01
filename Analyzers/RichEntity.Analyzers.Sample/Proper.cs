@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 #pragma warning disable CS8618
 
-namespace RichEntity.Analyzers.Playground;
+namespace RichEntity.Analyzers.Sample;
 
 public class Proper
 {
