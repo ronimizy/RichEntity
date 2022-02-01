@@ -10,6 +10,7 @@ namespace RichEntity.Analyzers.LiteralNameInvocationLocators.Base
     public abstract class MultipleArgumentLiteralNameInvocationLocator : ILiteralNameInvocationLocator
     {
         public abstract string MemberType { get; }
+        protected abstract string ParameterName { get; }
 
         public bool IsInvocationOperationRelevant(
             IInvocationOperation invocationOperation, OperationAnalysisContext context)
@@ -26,10 +27,16 @@ namespace RichEntity.Analyzers.LiteralNameInvocationLocators.Base
         }
 
         public IArgumentOperation GetRelevantArgument(
-            ImmutableArray<IArgumentOperation> arguments, OperationAnalysisContext context)
+            ImmutableArray<IArgumentOperation> arguments,
+            ImmutableArray<IParameterSymbol> parameters,
+            OperationAnalysisContext context)
         {
             var stringType = context.Compilation.GetTypeByMetadataName("System.String")!;
-            return arguments.Single(a => stringType.Equals(a.Value.Type));
+
+            return arguments
+                .Where(a => stringType.Equals(a.Value.Type))
+                .Select((a, i) => (Argument: a, i))
+                .Single(t => parameters[t.i].Name.Equals(ParameterName)).Argument;
         }
 
         public bool ContainsMember(
