@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using RichEntity.Analyzers.EntityTypeSymbolProviders;
+using RichEntity.Analyzers.EntityTypeSymbolProviders.Base;
 using RichEntity.Analyzers.Utility;
 
 namespace RichEntity.Analyzers.Extensions

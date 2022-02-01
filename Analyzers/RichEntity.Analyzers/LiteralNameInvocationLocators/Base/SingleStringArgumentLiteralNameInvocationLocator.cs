@@ -23,7 +23,8 @@ namespace RichEntity.Analyzers.LiteralNameInvocationLocators.Base
         }
 
         public IArgumentOperation GetRelevantArgument(
-            ImmutableArray<IArgumentOperation> arguments, OperationAnalysisContext context)
+            ImmutableArray<IArgumentOperation> arguments, ImmutableArray<IParameterSymbol> parameters,
+            OperationAnalysisContext context)
             => arguments[0];
 
         public bool ContainsMember(

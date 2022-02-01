@@ -29,34 +29,37 @@ namespace RichEntity.Analyzers.Tests
         [Test]
         public async Task InvalidEntityConfigurationGeneratesDiagnostics()
         {
+            const int firstStart = 49;
+            const int firstEnd = 70;
+
+            const int secondStart = 81;
+            const int secondEnd = 88;
+
             var code = await File.ReadAllTextAsync(@"Invalid.cs");
 
             var diagnostics = (await GetDiagnostics(code, typeof(object), typeof(ModelBuilder))).ToList();
 
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 46)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 47)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 48)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 49)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 50)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 51)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 52)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 53)));
-            
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 66)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 67)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 68)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 69)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 70)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 71)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 72)));
-            Assert.IsTrue(diagnostics.Any(d => CheckDiagnosticAt(d, 73)));
+            for (int i = firstStart; i <= firstEnd; i++)
+            {
+                Assert.IsTrue(
+                    diagnostics.Any(d => CheckDiagnosticAt(d, i)),
+                    $"Failed at line {firstStart + 1}");
+            }
+
+            for (int i = secondStart; i <= secondEnd; i++)
+            {
+                Assert.IsTrue(
+                    diagnostics.Any(d => CheckDiagnosticAt(d, i)),
+                    $"Failed at line {secondStart + 1}");
+            }
         }
 
         private static async Task<List<Diagnostic>> GetDiagnostics(string code, params Type[] referencesTypes)
         {
             var compilation = await CompilationBuilder.Build(code, referencesTypes);
             var compilationWithAnalyzers =
-                compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
+                compilation.WithAnalyzers(
+                    ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
             return (await compilationWithAnalyzers.GetAllDiagnosticsAsync()).ToList();
         }
 

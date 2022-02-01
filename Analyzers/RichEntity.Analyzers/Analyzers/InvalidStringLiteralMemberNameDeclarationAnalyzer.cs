@@ -48,7 +48,8 @@ namespace RichEntity.Analyzers.Analyzers
             if (relevantLocator is null)
                 return;
 
-            var argument = relevantLocator.GetRelevantArgument(invocationOperation.Arguments, context);
+            var argument = relevantLocator.GetRelevantArgument(
+                invocationOperation.Arguments, invocationOperation.TargetMethod.Parameters, context);
 
             var memberName = argument.Value.ConstantValue.Value?.ToString();
 
@@ -65,7 +66,7 @@ namespace RichEntity.Analyzers.Analyzers
 
             context.ReportDiagnostic(Diagnostic.Create(
                 Descriptor,
-                invocationOperation.Arguments[0].Syntax.GetLocation(),
+                argument.Syntax.GetLocation(),
                 namedTypeSymbol.GetFullyQualifiedName(),
                 relevantLocator.MemberType,
                 memberName));

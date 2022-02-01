@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 #pragma warning disable CS8618
 
@@ -43,6 +42,9 @@ public class Invalid
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var eb = modelBuilder.Entity<Person>();
+            var nb = eb.Navigation(p => p.Children);
+
             modelBuilder.Entity<Person>().Navigation(p => p.Children).HasField("_childrens");
             modelBuilder.Entity<Person>().Navigation(p => p.Children).HasField(Children);
             modelBuilder.Entity<Person>().Property("name");
@@ -51,26 +53,20 @@ public class Invalid
             modelBuilder.Entity<Person>().HasOne(Father);
             modelBuilder.Entity<Person>().HasMany("friends");
             modelBuilder.Entity<Person>().HasMany(Friends);
-        }
-    }
-
-    public class Configuration : IEntityTypeConfiguration<Person>
-    {
-        private const string Children = "_childrens";
-        private const string Name = "name";
-        private const string Father = "father";
-        private const string Friends = "_friends";
-
-        public void Configure(EntityTypeBuilder<Person> builder)
-        {
-            builder.Navigation(p => p.Children).HasField("_childrens");
-            builder.Navigation(p => p.Children).HasField(Children);
-            builder.Property("name");
-            builder.Property(Name);
-            builder.HasOne("father");
-            builder.HasOne(Father);
-            builder.HasMany("_friends");
-            builder.HasMany(Friends);
+            modelBuilder.Entity<Person>().OwnsMany("adad", "adaadd");
+            modelBuilder.Entity<Person>().OwnsOne<Person>("a", "b");
+            eb.Navigation(p => p.Children).HasField("_childrens");
+            eb.Navigation(p => p.Children).HasField(Children);
+            eb.Property("name");
+            eb.Property(Name);
+            eb.HasOne("father");
+            eb.HasOne(Father);
+            eb.HasMany("friends");
+            eb.HasMany(Friends);
+            eb.OwnsMany("adad", "adadad");
+            eb.OwnsOne("aa", "ada");
+            nb.HasField("_childrens");
+            nb.HasField(Children);
         }
     }
 }

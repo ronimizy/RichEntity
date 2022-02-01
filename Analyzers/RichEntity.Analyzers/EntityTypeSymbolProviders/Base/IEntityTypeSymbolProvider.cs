@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace RichEntity.Analyzers.EntityTypeSymbolProviders
+namespace RichEntity.Analyzers.EntityTypeSymbolProviders.Base
 {
     public interface IEntityTypeSymbolProvider
     {

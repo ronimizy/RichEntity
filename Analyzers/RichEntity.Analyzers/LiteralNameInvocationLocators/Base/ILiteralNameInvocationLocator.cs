@@ -12,7 +12,9 @@ namespace RichEntity.Analyzers.LiteralNameInvocationLocators.Base
         bool IsInvocationOperationRelevant(IInvocationOperation invocationOperation, OperationAnalysisContext context);
 
         IArgumentOperation GetRelevantArgument(
-            ImmutableArray<IArgumentOperation> arguments, OperationAnalysisContext context);
+            ImmutableArray<IArgumentOperation> arguments,
+            ImmutableArray<IParameterSymbol> parameters,
+            OperationAnalysisContext context);
 
         bool ContainsMember(ImmutableArray<ISymbol> memberSymbols, string memberName, OperationAnalysisContext context);
     }

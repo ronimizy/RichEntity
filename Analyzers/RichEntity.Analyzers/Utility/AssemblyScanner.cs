@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,9 +9,6 @@ namespace RichEntity.Analyzers.Utility
 {
     public static class AssemblyScanner
     {
-        private static readonly ConcurrentDictionary<Type, IReadOnlyCollection<Type>> Dictionary =
-            new ConcurrentDictionary<Type, IReadOnlyCollection<Type>>();
-
         public static IReadOnlyCollection<T> GetInstances<T>(IServiceCollection? dependencies = null)
         {
             var collection = new ServiceCollection();
@@ -27,7 +23,7 @@ namespace RichEntity.Analyzers.Utility
 
             var type = typeof(T);
 
-            IReadOnlyCollection<Type> types = Dictionary.GetOrAdd(type, t => Locate(t, t.Assembly));
+            IReadOnlyCollection<Type> types = Locate(type, type.Assembly);
 
             foreach (var injectedType in types)
             {
