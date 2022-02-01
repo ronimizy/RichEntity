@@ -15,7 +15,7 @@ string literal exists in your entity types.
 If you are declaring a shadow property on your entity model it is fair to suppress `RE1000`.
 
 ## Example of a violation
-https://github.com/ronimizy/RichEntity/blob/88caa83e48ba9e99686f5cd05095693cf5c11a45/Analyzers/RichEntity.Analyzers.Sample/Invalid.cs#L11-L62
+https://github.com/ronimizy/RichEntity/blob/7af0edd7e2b2a521dcc9aef161a86b3bacd7e134/Analyzers/RichEntity.Analyzers.Sample/Invalid.cs#L11-L57
 
 
 ### Description
