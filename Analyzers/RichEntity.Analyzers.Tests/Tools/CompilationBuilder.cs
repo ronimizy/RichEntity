@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace RichEntity.Analyzers.Tests.Tools;
 
@@ -30,6 +31,11 @@ public static class CompilationBuilder
                 code);
 
         var project = solution.GetProject(projectId)!;
+        var options = new CSharpCompilationOptions(
+            OutputKind.DynamicallyLinkedLibrary,
+            nullableContextOptions: NullableContextOptions.Enable);
+
+        project = project.WithCompilationOptions(options);
         project = project.AddMetadataReferences(GetAllReferencesNeededForTypes(referencedTypes));
 
         return (await project.GetCompilationAsync())!;
