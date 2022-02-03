@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace RichEntity.Analyzers.LiteralNameInvocationLocators.Base
+namespace RichEntity.Core.LiteralNameInvocationLocators.Base
 {
     public interface ILiteralNameInvocationLocator
     {

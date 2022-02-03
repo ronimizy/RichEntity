@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using RichEntity.Analyzers.Extensions;
+using RichEntity.Core.Extensions;
 
-namespace RichEntity.Analyzers.LiteralNameInvocationLocators.Base
+namespace RichEntity.Core.LiteralNameInvocationLocators.Base
 {
     public abstract class SingleStringArgumentLiteralNameInvocationLocator : ILiteralNameInvocationLocator
     {

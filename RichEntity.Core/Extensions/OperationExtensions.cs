@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-using RichEntity.Analyzers.EntityTypeSymbolProviders.Base;
-using RichEntity.Analyzers.Utility;
+using RichEntity.Core.EntityTypeSymbolProviders.Base;
+using RichEntity.Core.Utility;
 
-namespace RichEntity.Analyzers.Extensions
+namespace RichEntity.Core.Extensions
 {
     public static class OperationExtensions
     {
