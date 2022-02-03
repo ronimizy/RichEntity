@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using RichEntity.Analyzers.Analyzers;
-using RichEntity.Analyzers.Tests.Tools;
+using CompilationBuilder = RichEntity.Core.Utility.CompilationBuilder;
 
 namespace RichEntity.Analyzers.Tests
 {
