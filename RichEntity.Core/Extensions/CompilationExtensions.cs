@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace RichEntity.Analyzers.Extensions
+namespace RichEntity.Core.Extensions
 {
     public static class CompilationExtensions
     {

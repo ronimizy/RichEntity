@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RichEntity.Analyzers.Sample\RichEntity.Analyzers.Sample.csproj" />
       <ProjectReference Include="..\RichEntity.Analyzers\RichEntity.Analyzers.csproj" />
     </ItemGroup>
     

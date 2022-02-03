@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
-using RichEntity.Analyzers.EntityTypeSymbolProviders.Base;
+using RichEntity.Core.EntityTypeSymbolProviders.Base;
 
-namespace RichEntity.Analyzers.EntityTypeSymbolProviders
+namespace RichEntity.Core.EntityTypeSymbolProviders
 {
     public class OwnedNavigationBuilderTypeSymbolProvider : EntityBuilderTypeSymbolProviderBase
     {

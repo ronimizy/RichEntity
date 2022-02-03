@@ -3,9 +3,9 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using RichEntity.Analyzers.Extensions;
-using RichEntity.Analyzers.LiteralNameInvocationLocators.Base;
-using RichEntity.Analyzers.Utility;
+using RichEntity.Core.Extensions;
+using RichEntity.Core.LiteralNameInvocationLocators.Base;
+using RichEntity.Core.Utility;
 
 namespace RichEntity.Analyzers.Analyzers
 {

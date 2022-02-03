@@ -1,4 +1,4 @@
-namespace RichEntity.Analyzers.LiteralNameInvocationLocators
+namespace RichEntity.Core.LiteralNameInvocationLocators
 {
     public class NavigationLiteralNameInvocationLocator : Base.MultipleArgumentLiteralNameInvocationLocator
     {

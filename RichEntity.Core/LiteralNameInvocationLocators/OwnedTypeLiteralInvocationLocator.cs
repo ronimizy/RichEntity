@@ -1,6 +1,6 @@
-using RichEntity.Analyzers.LiteralNameInvocationLocators.Base;
+using RichEntity.Core.LiteralNameInvocationLocators.Base;
 
-namespace RichEntity.Analyzers.LiteralNameInvocationLocators
+namespace RichEntity.Core.LiteralNameInvocationLocators
 {
     public class OwnedTypeLiteralInvocationLocator : MultipleArgumentLiteralNameInvocationLocator
     {

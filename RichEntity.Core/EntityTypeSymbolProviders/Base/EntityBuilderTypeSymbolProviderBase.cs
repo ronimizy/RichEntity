@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
-using RichEntity.Analyzers.Extensions;
+using RichEntity.Core.Extensions;
 
-namespace RichEntity.Analyzers.EntityTypeSymbolProviders.Base
+namespace RichEntity.Core.EntityTypeSymbolProviders.Base
 {
     public abstract class EntityBuilderTypeSymbolProviderBase : IEntityTypeSymbolProvider
     {
