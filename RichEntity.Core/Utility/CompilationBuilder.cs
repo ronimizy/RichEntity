@@ -41,7 +41,7 @@ namespace RichEntity.Core.Utility
             return (await project.GetCompilationAsync())!;
         }
 
-        private static MetadataReference[] GetAllReferencesNeededForTypes(params Type[] types)
+        public static MetadataReference[] GetAllReferencesNeededForTypes(params Type[] types)
         {
             var files = types.SelectMany(GetAllAssemblyFilesNeededForType);
             return files.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x)).ToArray();

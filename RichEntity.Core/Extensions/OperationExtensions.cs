@@ -1,16 +1,17 @@
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RichEntity.Core.EntityTypeSymbolProviders.Base;
-using RichEntity.Core.Utility;
 
 namespace RichEntity.Core.Extensions
 {
     public static class OperationExtensions
     {
-        public static ITypeSymbol? GetOperationUnderlyingEntityType(this IOperation operation, Compilation compilation)
+        public static ITypeSymbol? GetOperationUnderlyingEntityType(
+            this IOperation operation, 
+            Compilation compilation, 
+            IReadOnlyCollection<IEntityTypeSymbolProvider> providers)
         {
-            var providers = AssemblyScanner.GetInstances<IEntityTypeSymbolProvider>();
-
             while (true)
             {
                 foreach (var provider in providers)

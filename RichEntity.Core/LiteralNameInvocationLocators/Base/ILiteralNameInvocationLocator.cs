@@ -9,13 +9,13 @@ namespace RichEntity.Core.LiteralNameInvocationLocators.Base
     {
         string MemberType { get; }
 
-        bool IsInvocationOperationRelevant(IInvocationOperation invocationOperation, OperationAnalysisContext context);
+        bool IsInvocationOperationRelevant(IInvocationOperation invocationOperation, Compilation compilation);
 
         IArgumentOperation GetRelevantArgument(
             ImmutableArray<IArgumentOperation> arguments,
             ImmutableArray<IParameterSymbol> parameters,
-            OperationAnalysisContext context);
+            Compilation compilation);
 
-        bool ContainsMember(ImmutableArray<ISymbol> memberSymbols, string memberName, OperationAnalysisContext context);
+        bool ContainsMember(ImmutableArray<ISymbol> memberSymbols, string memberName, Compilation compilation);
     }
 }

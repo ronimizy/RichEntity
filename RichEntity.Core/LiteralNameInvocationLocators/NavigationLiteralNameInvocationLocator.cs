@@ -6,6 +6,6 @@ namespace RichEntity.Core.LiteralNameInvocationLocators
         protected override string ParameterName => "navigationName";
 
         protected override bool IsNameComplies(string methodName)
-            => methodName is "HasOne" || methodName is "HasMany";
+            => methodName is "HasOne" || methodName is "HasMany" || methodName is "Navigation";
     }
 }

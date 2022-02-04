@@ -12,13 +12,12 @@ namespace RichEntity.Core.LiteralNameInvocationLocators.Base
         public abstract string MemberType { get; }
         protected abstract string ParameterName { get; }
 
-        public bool IsInvocationOperationRelevant(
-            IInvocationOperation invocationOperation, OperationAnalysisContext context)
+        public bool IsInvocationOperationRelevant(IInvocationOperation invocationOperation, Compilation compilation)
         {
             if (!IsNameComplies(invocationOperation.TargetMethod.Name))
                 return false;
 
-            var stringType = context.Compilation.GetTypeByMetadataName("System.String");
+            var stringType = compilation.GetTypeByMetadataName("System.String");
 
             if (stringType is null)
                 return false;
@@ -29,9 +28,9 @@ namespace RichEntity.Core.LiteralNameInvocationLocators.Base
         public IArgumentOperation GetRelevantArgument(
             ImmutableArray<IArgumentOperation> arguments,
             ImmutableArray<IParameterSymbol> parameters,
-            OperationAnalysisContext context)
+            Compilation compilation)
         {
-            var stringType = context.Compilation.GetTypeByMetadataName("System.String")!;
+            var stringType = compilation.GetTypeByMetadataName("System.String")!;
 
             return arguments
                 .Where(a => stringType.Equals(a.Value.Type))
@@ -39,8 +38,7 @@ namespace RichEntity.Core.LiteralNameInvocationLocators.Base
                 .Single(t => parameters[t.i].Name.Equals(ParameterName)).Argument;
         }
 
-        public bool ContainsMember(
-            ImmutableArray<ISymbol> memberSymbols, string memberName, OperationAnalysisContext context)
+        public bool ContainsMember(ImmutableArray<ISymbol> memberSymbols, string memberName, Compilation compilation)
             => memberSymbols.ContainsPropertyFieldCalled(memberName);
 
         protected abstract bool IsNameComplies(string methodName);

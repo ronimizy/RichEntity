@@ -13,16 +13,16 @@ namespace RichEntity.Core.Utility
         private static readonly ConcurrentDictionary<Type, IReadOnlyCollection<Type>> Dictionary =
             new ConcurrentDictionary<Type, IReadOnlyCollection<Type>>();
 
-        public static IReadOnlyCollection<T> GetInstances<T>(IServiceCollection? dependencies = null)
+        public static IReadOnlyCollection<T> GetInstances<T>()
+            => GetInstances<T>(new ServiceCollection());
+
+        public static IReadOnlyCollection<T> GetInstances<T>(IServiceCollection dependencies)
         {
             var collection = new ServiceCollection();
 
-            if (dependencies is { })
+            foreach (var descriptor in dependencies)
             {
-                foreach (var descriptor in dependencies)
-                {
-                    collection.Add(descriptor);
-                }
+                collection.Add(descriptor);
             }
 
             var type = typeof(T);
