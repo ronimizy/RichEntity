@@ -8,6 +8,11 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+      <PackageReference Include="RichEntity.CodeCompletion" Version="0.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\RichEntity.CodeCompletion\RichEntity.CodeCompletion.csproj" />
     </ItemGroup>
 
 </Project>

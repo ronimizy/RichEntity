@@ -35,6 +35,6 @@ public class Context : DbContext
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Person>().Navigation("");
+        modelBuilder.Entity<Person>().Navigation("C");
     }
 }

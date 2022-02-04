@@ -3,6 +3,9 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>RichEntity.CodeCompletion</Title>
+        <Authors>ronimizy</Authors>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -11,8 +14,33 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.0.1" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.0.1" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(OutputPath)\RichEntity.Core.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\RichEntity.Core\RichEntity.Core.csproj" PrivateAssets="all" />
+    </ItemGroup>
+
+    <Target Name="AddNuGetDlls" BeforeTargets="_GetPackageFiles">
+        <JoinItems Left="@(ResolvedCompileFileDefinitions)" LeftKey="NuGetPackageId" LeftMetadata="*" Right="@(PackageReference)" RightKey="" RightMetadata="*" ItemSpecToUse="Left">
+            <Output TaskParameter="JoinResult" ItemName="_PackagesToPack" />
+        </JoinItems>
+
+        <ItemGroup>
+            <_PackagesToPack Remove="@(_PackagesToPack)" Condition="%(NuGetPackageId) == 'NETStandard.Library'" />
+        </ItemGroup>
+
+        <Message Importance="High" Text="Adding DLLs from the following packages: @(_PackagesToPack->'%(NuGetPackageId)')" />
+
+        <ItemGroup>
+            <None Include="@(_PackagesToPack)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        </ItemGroup>
+    </Target>
 </Project>
