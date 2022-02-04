@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -29,28 +30,18 @@ namespace RichEntity.Analyzers.Tests
         [Test]
         public async Task InvalidEntityConfigurationGeneratesDiagnostics()
         {
-            const int firstStart = 49;
-            const int firstEnd = 70;
-
-            const int secondStart = 81;
-            const int secondEnd = 88;
+            const int firstStart = 48;
+            const int firstEnd = 69;
 
             var code = await File.ReadAllTextAsync(@"Invalid.cs");
 
-            var diagnostics = (await GetDiagnostics(code, typeof(object), typeof(ModelBuilder))).ToList();
+            var diagnostics = (await GetDiagnostics(code, typeof(object), typeof(ModelBuilder), typeof(CompletionProvider))).ToList();
 
             for (int i = firstStart; i <= firstEnd; i++)
             {
                 Assert.IsTrue(
                     diagnostics.Any(d => CheckDiagnosticAt(d, i)),
                     $"Failed at line {firstStart + 1}");
-            }
-
-            for (int i = secondStart; i <= secondEnd; i++)
-            {
-                Assert.IsTrue(
-                    diagnostics.Any(d => CheckDiagnosticAt(d, i)),
-                    $"Failed at line {secondStart + 1}");
             }
         }
 

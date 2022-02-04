@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>   
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
@@ -24,18 +24,18 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\RichEntity.Core\RichEntity.Core.csproj" />
-    </ItemGroup>
-
+    
     <ItemGroup>
         <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(OutputPath)\RichEntity.Core.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
     
+    <ItemGroup>
+      <ProjectReference Include="..\..\RichEntity.Core\RichEntity.Core.csproj" PrivateAssets="all"/>
+    </ItemGroup>
+
     <Target Name="AddNuGetDlls" BeforeTargets="_GetPackageFiles">
         <JoinItems Left="@(ResolvedCompileFileDefinitions)" LeftKey="NuGetPackageId" LeftMetadata="*" Right="@(PackageReference)" RightKey="" RightMetadata="*" ItemSpecToUse="Left">
             <Output TaskParameter="JoinResult" ItemName="_PackagesToPack" />
@@ -49,8 +49,6 @@
 
         <ItemGroup>
             <None Include="@(_PackagesToPack)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-
-            <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
         </ItemGroup>
     </Target>
 </Project>

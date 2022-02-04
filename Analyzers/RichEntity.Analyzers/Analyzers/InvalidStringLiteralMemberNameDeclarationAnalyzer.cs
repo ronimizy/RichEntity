@@ -1,17 +1,30 @@
+
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using RichEntity.Core.EntityTypeSymbolProviders.Base;
 using RichEntity.Core.Extensions;
 using RichEntity.Core.LiteralNameInvocationLocators.Base;
 using RichEntity.Core.Utility;
+using OperationExtensions = RichEntity.Core.Extensions.OperationExtensions;
 
 namespace RichEntity.Analyzers.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class InvalidStringLiteralMemberNameDeclarationAnalyzer : DiagnosticAnalyzer
     {
+        private readonly IReadOnlyCollection<ILiteralNameInvocationLocator> _locators;
+        private readonly IReadOnlyCollection<IEntityTypeSymbolProvider> _providers;
+
+        public InvalidStringLiteralMemberNameDeclarationAnalyzer()
+        {
+            _locators = AssemblyScanner.GetInstances<ILiteralNameInvocationLocator>();
+            _providers = AssemblyScanner.GetInstances<IEntityTypeSymbolProvider>();
+        }
+
         public static string Id => "RE1000";
         public static string Title => "InvalidStringLiteralMemberNameDeclaration";
         public static string Description => "Type \"{0}\" does not contain the definition for {1} called \"{2}\".";
@@ -40,28 +53,26 @@ namespace RichEntity.Analyzers.Analyzers
             if (invocationOperation.Instance is null)
                 return;
 
-            var invocationLocators = AssemblyScanner.GetInstances<ILiteralNameInvocationLocator>();
-
-            var relevantLocator = invocationLocators
-                .SingleOrDefault(l => l.IsInvocationOperationRelevant(invocationOperation, context));
+            var relevantLocator = _locators
+                .SingleOrDefault(l => l.IsInvocationOperationRelevant(invocationOperation, context.Compilation));
 
             if (relevantLocator is null)
                 return;
 
             var argument = relevantLocator.GetRelevantArgument(
-                invocationOperation.Arguments, invocationOperation.TargetMethod.Parameters, context);
+                invocationOperation.Arguments, invocationOperation.TargetMethod.Parameters, context.Compilation);
 
             var memberName = argument.Value.ConstantValue.Value?.ToString();
 
             if (memberName is null)
                 return;
 
-            var genericType = invocationOperation.GetOperationUnderlyingEntityType(context.Compilation);
+            var genericType = OperationExtensions.GetOperationUnderlyingEntityType(invocationOperation, context.Compilation, _providers);
 
             if (!(genericType is INamedTypeSymbol namedTypeSymbol))
                 return;
 
-            if (relevantLocator.ContainsMember(namedTypeSymbol.GetMembers(), memberName, context))
+            if (relevantLocator.ContainsMember(namedTypeSymbol.GetMembers(), memberName, context.Compilation))
                 return;
 
             context.ReportDiagnostic(Diagnostic.Create(
