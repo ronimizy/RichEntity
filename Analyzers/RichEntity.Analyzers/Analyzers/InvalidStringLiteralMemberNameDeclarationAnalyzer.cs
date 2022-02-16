@@ -9,7 +9,7 @@ using RichEntity.Core.Utility;
 
 namespace RichEntity.Analyzers.Analyzers
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    // [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class InvalidStringLiteralMemberNameDeclarationAnalyzer : DiagnosticAnalyzer
     {
         public static string Id => "RE1000";
