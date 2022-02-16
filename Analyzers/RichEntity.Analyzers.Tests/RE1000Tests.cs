@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using RichEntity.Analyzers.Analyzers;
+using RichEntity.Analyzers.Suppressors;
 using RichEntity.Analyzers.Tests.Tools;
 
 namespace RichEntity.Analyzers.Tests
@@ -59,7 +60,9 @@ namespace RichEntity.Analyzers.Tests
             var compilation = await CompilationBuilder.Build(code, referencesTypes);
             var compilationWithAnalyzers =
                 compilation.WithAnalyzers(
-                    ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
+                    ImmutableArray.Create<DiagnosticAnalyzer>(
+                        new InvalidStringLiteralMemberNameDeclarationAnalyzer(),
+                        new UninitializedDbSetDiagnosticSuppressor()));
             return (await compilationWithAnalyzers.GetAllDiagnosticsAsync()).ToList();
         }
 

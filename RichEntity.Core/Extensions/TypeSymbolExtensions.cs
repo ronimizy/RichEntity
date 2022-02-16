@@ -19,6 +19,24 @@ namespace RichEntity.Core.Extensions
             return false;
         }
 
+        public static bool DerivesOrConstructedFrom(this INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol baseType)
+        {
+            if (namedTypeSymbol.EqualsDefault(baseType))
+                return true;
+
+            if (namedTypeSymbol.ConstructedFrom.EqualsDefault(baseType))
+                return true;
+
+            if (namedTypeSymbol.BaseType is object && namedTypeSymbol.BaseType.DerivesOrConstructedFrom(baseType))
+                return true;
+
+            if (!namedTypeSymbol.ConstructedFrom.EqualsDefault(namedTypeSymbol) &&
+                namedTypeSymbol.ConstructedFrom.DerivesOrConstructedFrom(baseType))
+                return true;
+
+            return false;
+        }
+
         public static INamedTypeSymbol? UnwrapToFirstDerivative(
             this INamedTypeSymbol? unwrapped, INamedTypeSymbol derivationSource)
         {
@@ -29,5 +47,8 @@ namespace RichEntity.Core.Extensions
 
             return unwrapped;
         }
+
+        public static bool EqualsDefault(this ITypeSymbol left, ITypeSymbol right)
+            => left.Equals(right, SymbolEqualityComparer.Default);
     }
 }

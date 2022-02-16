@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageVersion>0.1.4</PackageVersion>
+        <PackageVersion>0.1.5</PackageVersion>
         <PackageId>RichEntity.Analyzers</PackageId>
         <Title>RichEntity.Analyzers</Title>
         <Authors>ronimizy</Authors>
@@ -20,7 +20,7 @@
         <PackageProjectUrl>https://github.com/ronimizy/RichEntity</PackageProjectUrl>
         <RepositoryUrl>https://github.com/ronimizy/RichEntity</RepositoryUrl>
         <RepositoryType>github</RepositoryType>
-        <PackageReleaseNotes>Disabled RE1000 due to insufficient roslyn API access </PackageReleaseNotes>
+        <PackageReleaseNotes>Added CS8618 suppressor for uninitialized DbSet&lt;&gt;</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

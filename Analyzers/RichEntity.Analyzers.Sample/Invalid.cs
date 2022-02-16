@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-#pragma warning disable CS8618
 
 namespace RichEntity.Analyzers.Sample;
 
@@ -20,7 +19,9 @@ public class Invalid
             _father = father;
         }
 
+#pragma warning disable CS8618
         protected Person() { }
+#pragma warning restore CS8618
 
         public string Name => _name;
         public Person? Father => _father;
@@ -38,7 +39,10 @@ public class Invalid
         private const string Father = "father";
         private const string Friends = "_friends";
 
-        public DbSet<Person> Persons { get; private set; } = null!;
+        public DbSet<Person> Persons { get; set; }
+
+        public Context(DbContextOptions<Context> options)
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
