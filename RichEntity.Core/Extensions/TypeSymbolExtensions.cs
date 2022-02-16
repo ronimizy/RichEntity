@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
 namespace RichEntity.Core.Extensions
@@ -8,9 +10,9 @@ namespace RichEntity.Core.Extensions
         {
             var derivative = namedTypeSymbol;
 
-            while (derivative is { })
+            while (derivative is object)
             {
-                if (derivative.Equals(baseClass))
+                if (derivative.EqualsProperly(baseClass))
                     return true;
 
                 derivative = derivative.BaseType;
@@ -22,12 +24,26 @@ namespace RichEntity.Core.Extensions
         public static INamedTypeSymbol? UnwrapToFirstDerivative(
             this INamedTypeSymbol? unwrapped, INamedTypeSymbol derivationSource)
         {
-            while (unwrapped is { } && !derivationSource.Equals(unwrapped.BaseType))
+            while (unwrapped is object && !derivationSource.EqualsProperly(unwrapped.BaseType))
             {
                 unwrapped = unwrapped.BaseType;
             }
 
             return unwrapped;
+        }
+
+
+        public static ImmutableArray<ISymbol> GetAllMembers(this INamedTypeSymbol? typeSymbol)
+        {
+            var members = new List<ISymbol>();
+
+            while (typeSymbol is object)
+            {
+                members.AddRange(typeSymbol.GetMembers());
+                typeSymbol = typeSymbol.BaseType;
+            }
+
+            return members.ToImmutableArray();
         }
     }
 }

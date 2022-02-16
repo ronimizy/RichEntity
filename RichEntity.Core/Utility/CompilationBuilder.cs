@@ -9,7 +9,8 @@ namespace RichEntity.Core.Utility
 {
     public static class CompilationBuilder
     {
-        public static async Task<Compilation> Build(string code, params Type[] referencedTypes)
+        public static async Task<Compilation> Build(
+            string code, CSharpCompilationOptions options, params Type[] referencedTypes)
         {
             var workspace = new AdhocWorkspace();
             var _ = typeof(Microsoft.CodeAnalysis.CSharp.Formatting.CSharpFormattingOptions);
@@ -31,10 +32,6 @@ namespace RichEntity.Core.Utility
                     code);
 
             var project = solution.GetProject(projectId)!;
-            var options = new CSharpCompilationOptions(
-                OutputKind.DynamicallyLinkedLibrary,
-                nullableContextOptions: NullableContextOptions.Enable);
-
             project = project.WithCompilationOptions(options);
             project = project.AddMetadataReferences(GetAllReferencesNeededForTypes(referencedTypes));
 

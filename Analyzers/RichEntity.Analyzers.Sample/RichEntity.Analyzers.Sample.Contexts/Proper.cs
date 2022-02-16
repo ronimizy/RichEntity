@@ -1,42 +1,11 @@
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-#pragma warning disable CS8618
-
 namespace RichEntity.Analyzers.Sample;
+using Person = RichEntity.Analyzers.Sample.Types.Proper.Person;
 
 public class Proper
 {
-    public class Person
-    {
-        private readonly List<Person> _friends;
-        private readonly List<Person> _children;
-        private readonly Person? _father;
-        private readonly string _name;
-
-        public Person(string name, Person? father)
-        {
-            _children = new List<Person>();
-            _friends = new List<Person>();
-            _name = name;
-            _father = father;
-        }
-
-        protected Person() { }
-
-        public string Name => _name;
-        public Person? Father => _father;
-
-        public IReadOnlyCollection<Person> Children => _children;
-
-        public void AddChild(Person person)
-            => _children.Add(person);
-
-        public void AddFriend(Person person)
-            => _friends.Add(person);
-    }
-
     public class Context : DbContext
     {
         private const string Children = "_children";

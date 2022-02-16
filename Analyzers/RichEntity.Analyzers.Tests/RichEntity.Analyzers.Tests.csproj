@@ -24,12 +24,19 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\RichEntity.Core\RichEntity.Core.csproj" />
+      <ProjectReference Include="..\RichEntity.Analyzers.Sample\RichEntity.Analyzers.Sample.Types\RichEntity.Analyzers.Sample.Types.csproj" />
       <ProjectReference Include="..\RichEntity.Analyzers\RichEntity.Analyzers.csproj" />
     </ItemGroup>
     
     <ItemGroup>
-        <Content Include="../RichEntity.Analyzers.Sample/Proper.cs" CopyToOutputDirectory="Always" />
-        <Content Include="../RichEntity.Analyzers.Sample/Invalid.cs" CopyToOutputDirectory="Always" />
+        <Content Include="..\RichEntity.Analyzers.Sample\RichEntity.Analyzers.Sample.Contexts\Invalid.cs">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+          <Link>Invalid.cs</Link>
+        </Content>
+        <Content Include="..\RichEntity.Analyzers.Sample\RichEntity.Analyzers.Sample.Contexts\Proper.cs">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+          <Link>Proper.cs</Link>
+        </Content>
     </ItemGroup>
 
 </Project>

@@ -11,5 +11,8 @@ namespace RichEntity.Core.Extensions
 
         public static bool ContainsPropertyFieldCalled(this IEnumerable<ISymbol> symbols, string name)
             => symbols.WhereSymbolsArePropertyFields().Any(s => s.Name.Equals(name));
+
+        public static bool EqualsProperly(this ISymbol left, ISymbol? right)
+            => left.Equals(right, SymbolEqualityComparer.Default);
     }
 }

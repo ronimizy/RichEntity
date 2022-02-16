@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -9,7 +8,6 @@ using RichEntity.Core.EntityTypeSymbolProviders.Base;
 using RichEntity.Core.Extensions;
 using RichEntity.Core.LiteralNameInvocationLocators.Base;
 using RichEntity.Core.Utility;
-using OperationExtensions = RichEntity.Core.Extensions.OperationExtensions;
 
 namespace RichEntity.Analyzers.Analyzers
 {
@@ -27,7 +25,9 @@ namespace RichEntity.Analyzers.Analyzers
 
         public static string Id => "RE1000";
         public static string Title => "InvalidStringLiteralMemberNameDeclaration";
-        public static string Description => "Type \"{0}\" does not contain the definition for {1} called \"{2}\".";
+
+        public static string Description =>
+            "Type \"{0}\" does not contain the definition for {1} called \"{2}\" {3} : {4}.";
 
         public static DiagnosticDescriptor Descriptor { get; } = new DiagnosticDescriptor(
             Id, Title, Description, "EntityFrameworkCore", DiagnosticSeverity.Error, true);
@@ -37,6 +37,10 @@ namespace RichEntity.Analyzers.Analyzers
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.ReportDiagnostics |
+                                                   GeneratedCodeAnalysisFlags.Analyze);
+
             context.RegisterCompilationStartAction(ctx =>
             {
                 if (ctx.Compilation.IsEntityFrameworkCoreReferenced())
@@ -53,26 +57,30 @@ namespace RichEntity.Analyzers.Analyzers
             if (invocationOperation.Instance is null)
                 return;
 
+            var compilation = context.Compilation;
+
             var relevantLocator = _locators
-                .SingleOrDefault(l => l.IsInvocationOperationRelevant(invocationOperation, context.Compilation));
+                .SingleOrDefault(l => l.IsInvocationOperationRelevant(invocationOperation, compilation));
 
             if (relevantLocator is null)
                 return;
 
             var argument = relevantLocator.GetRelevantArgument(
-                invocationOperation.Arguments, invocationOperation.TargetMethod.Parameters, context.Compilation);
+                invocationOperation.Arguments, invocationOperation.TargetMethod.Parameters, compilation);
 
             var memberName = argument.Value.ConstantValue.Value?.ToString();
 
             if (memberName is null)
                 return;
 
-            var genericType = OperationExtensions.GetOperationUnderlyingEntityType(invocationOperation, context.Compilation, _providers);
+            var genericType = invocationOperation.GetOperationUnderlyingEntityType(compilation, _providers);
 
             if (!(genericType is INamedTypeSymbol namedTypeSymbol))
                 return;
 
-            if (relevantLocator.ContainsMember(namedTypeSymbol.GetMembers(), memberName, context.Compilation))
+            ImmutableArray<ISymbol> members = namedTypeSymbol.GetAllMembers();
+
+            if (relevantLocator.ContainsMember(members, memberName, compilation))
                 return;
 
             context.ReportDiagnostic(Diagnostic.Create(
@@ -80,7 +88,9 @@ namespace RichEntity.Analyzers.Analyzers
                 argument.Syntax.GetLocation(),
                 namedTypeSymbol.GetFullyQualifiedName(),
                 relevantLocator.MemberType,
-                memberName));
+                memberName,
+                genericType.Name,
+                string.Join(", ", members.Select(m => $"{m.Kind} {m.Name}"))));
         }
     }
 }
