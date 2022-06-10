@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <RootNamespace>RichEntity.Analyzers.Sample</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include=".editorconfig" Link=".editorconfig" />
+    </ItemGroup>
+</Project>
