@@ -1,50 +1,71 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace RichEntity.Analyzers.Tests.Tools;
 
 public static class CompilationBuilder
 {
-    public static async Task<Compilation> Build(string code, params Type[] referencedTypes)
+    public static Task<Compilation> BuildCompilation(
+        IReadOnlyCollection<Type> referencedTypes,
+        params SourceFile[] sourceFiles)
+        => BuildCompilation(referencedTypes, null, null, sourceFiles);
+
+    public static async Task<Compilation> BuildCompilation(
+        IReadOnlyCollection<Type> referencedTypes,
+        CompilationOptions? compilationOptions = null,
+        ParseOptions? parseOptions = null,
+        params SourceFile[] sourceFiles)
+    {
+        var project = BuildProject(referencedTypes, compilationOptions, parseOptions, sourceFiles);
+        return (await project.GetCompilationAsync())!;
+    }
+
+    public static Project BuildProject(
+        IReadOnlyCollection<Type> referencedTypes,
+        CompilationOptions? compilationOptions = null,
+        ParseOptions? parseOptions = null,
+        params SourceFile[] sourceFiles)
     {
         var workspace = new AdhocWorkspace();
         var _ = typeof(Microsoft.CodeAnalysis.CSharp.Formatting.CSharpFormattingOptions);
 
         var solution = workspace.CurrentSolution;
-
         var projectId = ProjectId.CreateNewId();
 
-        solution = solution
-            .AddProject(
-                projectId,
-                "MyTestProject",
-                "MyTestProject",
-                LanguageNames.CSharp);
+        solution = solution.AddProject(projectId, "MyTestProject", "MyTestProject", LanguageNames.CSharp);
 
-        solution = solution
-            .AddDocument(DocumentId.CreateNewId(projectId),
-                "File.cs",
-                code);
+        foreach (var (name, code) in sourceFiles)
+        {
+            solution = solution.AddDocument(DocumentId.CreateNewId(projectId), name, code);
+        }
+
+        if (parseOptions is not null)
+        {
+            solution = solution.WithProjectParseOptions(projectId, parseOptions);
+        }
 
         var project = solution.GetProject(projectId)!;
-        var options = new CSharpCompilationOptions(
-            OutputKind.DynamicallyLinkedLibrary,
-            nullableContextOptions: NullableContextOptions.Enable);
 
-        project = project.WithCompilationOptions(options);
+        if (compilationOptions is not null)
+        {
+            project = project.WithCompilationOptions(compilationOptions);
+        }
+        
         project = project.AddMetadataReferences(GetAllReferencesNeededForTypes(referencedTypes));
 
-        return (await project.GetCompilationAsync())!;
+        workspace.TryApplyChanges(project.Solution);
+
+        return workspace.CurrentSolution.Projects.Single();
     }
 
-    private static MetadataReference[] GetAllReferencesNeededForTypes(params Type[] types)
+    private static IEnumerable<MetadataReference> GetAllReferencesNeededForTypes(IReadOnlyCollection<Type> types)
     {
-        var files = types.SelectMany(GetAllAssemblyFilesNeededForType);
-        return files.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x)).ToArray();
+        IEnumerable<string> files = types.SelectMany(GetAllAssemblyFilesNeededForType);
+        return files.Select(x => (MetadataReference)MetadataReference.CreateFromFile(x));
     }
 
     private static string[] GetAllAssemblyFilesNeededForType(Type type)

@@ -5,11 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using RichEntity.Analysis.Analyzers;
 using RichEntity.Analyzers.Tests.Tools;
+using RichEntity.EntityFrameworkCore.Analysis.StringLiteral;
 
 namespace RichEntity.Analyzers.Tests;
 
@@ -21,7 +22,12 @@ public class RE1000Tests
     {
         var code = await File.ReadAllTextAsync(@"Proper.cs");
 
-        List<Diagnostic> diagnostics = await GetDiagnostics(code, typeof(object), typeof(ModelBuilder));
+        var diagnostics = await GetDiagnostics(code, typeof(object), typeof(ModelBuilder));
+
+        foreach (var diagnostic in diagnostics)
+        {
+            Console.WriteLine(diagnostic);
+        }
 
         Assert.AreEqual(0, diagnostics.Count);
     }
@@ -29,8 +35,8 @@ public class RE1000Tests
     [Test]
     public async Task InvalidEntityConfigurationGeneratesDiagnostics()
     {
-        const int firstStart = 49;
-        const int firstEnd = 70;
+        const int firstStart = 48;
+        const int firstEnd = 69;
 
         const int secondStart = 81;
         const int secondEnd = 88;
@@ -45,21 +51,22 @@ public class RE1000Tests
                 diagnostics.Any(d => CheckDiagnosticAt(d, i)),
                 $"Failed at line {firstStart + 1}");
         }
-
-        for (int i = secondStart; i <= secondEnd; i++)
-        {
-            Assert.IsTrue(
-                diagnostics.Any(d => CheckDiagnosticAt(d, i)),
-                $"Failed at line {secondStart + 1}");
-        }
     }
 
     private static async Task<List<Diagnostic>> GetDiagnostics(string code, params Type[] referencesTypes)
     {
-        var compilation = await CompilationBuilder.Build(code, referencesTypes);
-        var compilationWithAnalyzers =
-            compilation.WithAnalyzers(
-                ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
+        var options = new CSharpCompilationOptions(
+            OutputKind.DynamicallyLinkedLibrary,
+            nullableContextOptions: NullableContextOptions.Annotations);
+
+        var compilation = await CompilationBuilder.BuildCompilation(
+            referencesTypes,
+            compilationOptions: options,
+            sourceFiles: new SourceFile("File", code));
+
+        var compilationWithAnalyzers = compilation.WithAnalyzers(
+            ImmutableArray.Create<DiagnosticAnalyzer>(new InvalidStringLiteralMemberNameDeclarationAnalyzer()));
+
         return (await compilationWithAnalyzers.GetAllDiagnosticsAsync()).ToList();
     }
 
