@@ -31,7 +31,7 @@ public class ParameterlessConstructorBuilder : ILink<TypeBuildingCommand, TypeDe
         LinkDelegate<TypeBuildingCommand, SynchronousContext, TypeDeclarationSyntax> next)
     {
         var needConstructor = !request.Symbol.Constructors
-            .Any(c => !c.IsStatic && c.Parameters.Length == 0);
+            .Any(c => !c.IsStatic && c.Parameters.Length == 0 && !c.IsImplicitlyDeclared);
 
         needConstructor = needConstructor && request.Symbol.TypeKind is not TypeKind.Struct;
 
