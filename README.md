@@ -1,4 +1,4 @@
-# RichEntity
+# RichEntity [![Nuget](https://img.shields.io/nuget/v/RichEntity?style=flat-square)](https://www.nuget.org/packages/RichEntity)
 
 A library for reducing boilerplate when defining entities.
 It is using Roslyn's Source Generators to generate the code
