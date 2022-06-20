@@ -10,32 +10,36 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.0.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-        <PackageReference Include="NUnit" Version="3.13.2" />
+        <PackageReference Include="FluentChaining" Version="1.0.3" />
+        <PackageReference Include="FluentScanning" Version="1.1.1" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="FluentScanning.DependencyInjection" Version="1.1.2" GeneratePathProperty="true" PrivateAssets="all" />
+        
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.2.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.2.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.2.0" />
+        
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
+        
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+        <PackageReference Include="NUnit" Version="3.13.3" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
-        <PackageReference Include="coverlet.collector" Version="3.1.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference Include="coverlet.collector" Version="3.1.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RichEntity\RichEntity.csproj" />
+        <ProjectReference Include="..\RichEntity.EntityFrameworkCore\RichEntity.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\RichEntity\RichEntity.csproj" />
     </ItemGroup>
-    
+
     <ItemGroup>
-        <Content Include="..\RichEntity.Sample\Invalid.cs">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-          <Link>Invalid.cs</Link>
-        </Content>
-        <Content Include="..\RichEntity.Sample\Proper.cs">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-          <Link>Proper.cs</Link>
-        </Content>
+        <Content Include="..\RichEntity.Sample\Invalid.cs" Link="Invalid.cs" CopyToOutputDirectory="Always" />
+        
+        <Content Include="..\RichEntity.Sample\Proper.cs" Link="Proper.cs" CopyToOutputDirectory="Always" />
+
+        <Content Include="..\RichEntity.Sample\Generation\Entity\Sample.cs" Link="Generation\Entity\Sample.cs" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
 </Project>

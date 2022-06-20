@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.Tests", "RichEnt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.Sample", "RichEntity.Sample\RichEntity.Sample.csproj", "{7E583089-82AF-44F8-89D9-EAFF3764ED0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.Annotations", "RichEntity.Annotations\RichEntity.Annotations.csproj", "{C7208929-A753-494C-85ED-76EE2B6DEFC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichEntity.EntityFrameworkCore", "RichEntity.EntityFrameworkCore\RichEntity.EntityFrameworkCore.csproj", "{87298B14-5E69-45F5-9C4E-1457B61408A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,14 @@ Global
 		{7E583089-82AF-44F8-89D9-EAFF3764ED0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E583089-82AF-44F8-89D9-EAFF3764ED0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E583089-82AF-44F8-89D9-EAFF3764ED0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7208929-A753-494C-85ED-76EE2B6DEFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7208929-A753-494C-85ED-76EE2B6DEFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7208929-A753-494C-85ED-76EE2B6DEFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7208929-A753-494C-85ED-76EE2B6DEFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87298B14-5E69-45F5-9C4E-1457B61408A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87298B14-5E69-45F5-9C4E-1457B61408A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87298B14-5E69-45F5-9C4E-1457B61408A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87298B14-5E69-45F5-9C4E-1457B61408A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
