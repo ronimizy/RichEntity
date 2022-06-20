@@ -19,10 +19,15 @@
         <RepositoryUrl>https://github.com/ronimizy/RichEntity</RepositoryUrl>
         <PackageProjectUrl>https://github.com/ronimizy/RichEntity</PackageProjectUrl>
         <RepositoryType>github</RepositoryType>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     </PropertyGroup>
 
     <PropertyGroup>
         <PackageVersion>1.0.0</PackageVersion>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <None Include="..\LICENSE.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>
