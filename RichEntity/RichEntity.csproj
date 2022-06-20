@@ -26,8 +26,8 @@
     </PropertyGroup>
     
     <PropertyGroup>
-        <PackageVersion>1.0.1</PackageVersion>
-        <PackageReleaseNotes>Accounted for implicit constructors.</PackageReleaseNotes>
+        <PackageVersion>1.0.2</PackageVersion>
+        <PackageReleaseNotes>Added derived entities support.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
