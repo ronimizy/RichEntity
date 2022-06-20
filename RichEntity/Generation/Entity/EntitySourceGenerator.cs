@@ -15,7 +15,7 @@ namespace RichEntity.Generation.Entity;
 [Generator]
 public class EntitySourceGenerator : ISourceGenerator
 {
-    private readonly IChain<FileBuildingCommand, CompilationUnitSyntax> _fileBuildingChain;
+    protected IChain<FileBuildingCommand, CompilationUnitSyntax> FileBuildingChain { get; init; }
 
     public EntitySourceGenerator()
     {
@@ -52,10 +52,10 @@ public class EntitySourceGenerator : ISourceGenerator
 
         var provider = collection.BuildServiceProvider();
 
-        _fileBuildingChain = provider.GetRequiredService<IChain<FileBuildingCommand, CompilationUnitSyntax>>();
+        FileBuildingChain = provider.GetRequiredService<IChain<FileBuildingCommand, CompilationUnitSyntax>>();
     }
 
-    public void Initialize(GeneratorInitializationContext context)
+    public virtual void Initialize(GeneratorInitializationContext context)
     {
         context.RegisterForSyntaxNotifications(() => new EntityInterfaceSyntaxReceiver());
     }
@@ -64,7 +64,9 @@ public class EntitySourceGenerator : ISourceGenerator
     {
         context.CancellationToken.ThrowIfCancellationRequested();
 
-        if (context.SyntaxReceiver is not EntityInterfaceSyntaxReceiver receiver)
+        IReadOnlyCollection<TypeDeclarationSyntax>? nodes = GetNodes(context);
+        
+        if (nodes is null)
             return;
 
         var entityInterface = context.Compilation
@@ -73,10 +75,26 @@ public class EntitySourceGenerator : ISourceGenerator
         if (entityInterface is null)
             return;
 
-        foreach (var syntax in receiver.Nodes)
+        foreach (var syntax in nodes)
         {
             ProcessEntity(context, entityInterface, syntax);
         }
+    }
+
+    protected virtual IReadOnlyCollection<TypeDeclarationSyntax>? GetNodes(GeneratorExecutionContext context)
+    {
+        if (context.SyntaxReceiver is not EntityInterfaceSyntaxReceiver receiver)
+            return null;
+
+        return receiver.Nodes;
+    }
+
+    protected virtual ITypeSymbol? GetIdentifierSymbol(INamedTypeSymbol entitySymbol, INamedTypeSymbol entityInterface)
+    {
+        var concreteEntityInterface = entitySymbol.Interfaces
+            .SingleOrDefault(t => t.IsAssignableTo(entityInterface));
+
+        return concreteEntityInterface?.TypeArguments.SingleOrDefault();
     }
 
     private void ProcessEntity(
@@ -89,10 +107,7 @@ public class EntitySourceGenerator : ISourceGenerator
         if (semanticModel.GetDeclaredSymbol(syntax) is not INamedTypeSymbol entitySymbol)
             return;
 
-        var concreteEntityInterface = entitySymbol.Interfaces
-            .SingleOrDefault(t => t.IsAssignableTo(entityInterface));
-
-        var identifierSymbol = concreteEntityInterface?.TypeArguments.SingleOrDefault();
+        var identifierSymbol = GetIdentifierSymbol(entitySymbol, entityInterface);
 
         if (identifierSymbol is null)
             return;
@@ -104,7 +119,7 @@ public class EntitySourceGenerator : ISourceGenerator
             CompilationUnit(),
             context);
 
-        var compilationUnit = _fileBuildingChain.Process(fileBuildingCommand).NormalizeWhitespace();
+        var compilationUnit = FileBuildingChain.Process(fileBuildingCommand).NormalizeWhitespace();
         var fileName = $"{syntax.Identifier}.{Constants.FilenameSuffix}";
 
         context.AddSource(fileName, compilationUnit.ToString());

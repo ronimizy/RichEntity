@@ -56,7 +56,7 @@ public class PartialTypeAnalyzer : DiagnosticAnalyzer
         if (entityInterfaceSymbol is null)
             return;
 
-        if (!typeSymbol.Interfaces.Any(i => i.IsAssignableTo(entityInterfaceSymbol)))
+        if (!typeSymbol.AllInterfaces.Any(i => i.IsAssignableTo(entityInterfaceSymbol)))
             return;
 
         if (Conforming(syntax))
