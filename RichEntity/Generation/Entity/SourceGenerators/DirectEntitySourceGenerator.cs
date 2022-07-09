@@ -80,7 +80,7 @@ public class DirectEntitySourceGenerator : EntitySourceGeneratorBase
 
         return new[]
         {
-            new Identifier(concreteEntityInterface.TypeArguments[0])
+            new Identifier("Id", concreteEntityInterface.TypeArguments[0])
         };
     }
 }

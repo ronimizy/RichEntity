@@ -84,7 +84,7 @@ public class DerivedEntitySourceGenerator : EntitySourceGeneratorBase
 
         return new[]
         {
-            new Identifier(concreteEntityInterface.TypeArguments[0])
+            new Identifier("Id", concreteEntityInterface.TypeArguments[0])
         };
     }
 }
