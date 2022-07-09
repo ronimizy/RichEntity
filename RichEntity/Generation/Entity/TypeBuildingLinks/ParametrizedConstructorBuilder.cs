@@ -14,6 +14,7 @@ namespace RichEntity.Generation.Entity.TypeBuildingLinks;
 public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDeclarationSyntax>
 {
     private static readonly ParameterSyntax Parameter;
+    private static readonly SyntaxTrivia PragmaDisable;
     private static readonly BlockSyntax Body;
 
     static ParametrizedConstructorBuilder()
@@ -22,8 +23,18 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
         var right = IdentifierName("id");
         var assignment = AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, left, right);
 
+        var disableTrivia = PragmaWarningDirectiveTrivia(Token(SyntaxKind.DisableKeyword), true);
+        var restoreTrivia = PragmaWarningDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true);
+        var errorCode = IdentifierName("CS8618");
+        var pragmaRestore = Trivia(restoreTrivia.AddErrorCodes(errorCode));
+
+        var braceToken = Token(TriviaList(pragmaRestore), SyntaxKind.OpenBraceToken, TriviaList());
+
         Parameter = Parameter(Identifier("id"));
-        Body = Block(SingletonList<StatementSyntax>(ExpressionStatement(assignment)));
+        PragmaDisable = Trivia(disableTrivia.AddErrorCodes(errorCode));
+
+        Body = Block(SingletonList<StatementSyntax>(ExpressionStatement(assignment)))
+            .WithOpenBraceToken(braceToken);
     }
 
     public TypeDeclarationSyntax Process(
@@ -39,10 +50,14 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
         if (hasParameterizedConstructor)
             return next(request, context);
 
-        var accessModifier = GetAccessModifier(request);
+        var accessModifier = GetAccessModifier(request) switch
+        {
+            var x and (SyntaxKind.PublicKeyword or SyntaxKind.ProtectedKeyword) => Token(x),
+            var x => Token(TriviaList(PragmaDisable), x, TriviaList())
+        };
 
         var declaration = ConstructorDeclaration(Identifier(request.Symbol.Name))
-            .AddModifiers(Token(accessModifier))
+            .AddModifiers(accessModifier)
             .AddParameterListParameters(Parameter.WithType(IdentifierName(request.IdentifierSymbol.Name)))
             .WithBody(Body);
 
