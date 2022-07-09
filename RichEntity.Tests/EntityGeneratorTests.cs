@@ -11,6 +11,7 @@ using NUnit.Framework;
 using RichEntity.Analysis.Entity;
 using RichEntity.Analyzers.Tests.Tools;
 using RichEntity.Generation.Entity;
+using RichEntity.Generation.Entity.SourceGenerators;
 using RichEntity.Utility;
 
 namespace RichEntity.Analyzers.Tests;
@@ -41,7 +42,7 @@ public class EntityGeneratorTests
         var newComp = RunGenerators(
             compilation,
             out ImmutableArray<Diagnostic> diagnostics,
-            new EntitySourceGenerator());
+            new DirectEntitySourceGenerator());
 
         var analyzedComp = newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PartialTypeAnalyzer()));
 
