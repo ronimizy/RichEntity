@@ -35,7 +35,7 @@ public class ClassBuilder : ILink<FileBuildingCommand, CompilationUnitSyntax>
         (
             request.Syntax,
             request.Symbol,
-            request.IdentifierSymbol,
+            request.Identifiers,
             declaration,
             request.Context.Compilation
         );
