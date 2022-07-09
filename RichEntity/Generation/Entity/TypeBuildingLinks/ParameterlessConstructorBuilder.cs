@@ -22,7 +22,7 @@ public class ParameterlessConstructorBuilder : ILink<TypeBuildingCommand, TypeDe
         var pragmaRestore = Trivia(restoreTrivia.AddErrorCodes(errorCode));
 
         Modifiers = Token(TriviaList(pragmaDisable), SyntaxKind.ProtectedKeyword, TriviaList());
-        PragmaRestore = Token(TriviaList(pragmaRestore), SyntaxKind.CloseBraceToken, TriviaList());
+        PragmaRestore = Token(TriviaList(pragmaRestore), SyntaxKind.OpenBraceToken, TriviaList());
     }
 
     public TypeDeclarationSyntax Process(
@@ -40,7 +40,7 @@ public class ParameterlessConstructorBuilder : ILink<TypeBuildingCommand, TypeDe
 
         var declaration = ConstructorDeclaration(Identifier(request.Symbol.Name))
             .AddModifiers(Modifiers)
-            .WithBody(Block().WithCloseBraceToken(PragmaRestore));
+            .WithBody(Block().WithOpenBraceToken(PragmaRestore));
 
         request = request with
         {
