@@ -26,7 +26,7 @@ public class GetHashCodeBuilder : ILink<TypeBuildingCommand, TypeDeclarationSynt
         LinkDelegate<TypeBuildingCommand, SynchronousContext, TypeDeclarationSyntax> next)
     {
         ArgumentSyntax[] arguments = request.Identifiers
-            .Select(BuildIdentifierArgument)
+            .Select(i => i.GetArgument())
             .ToArray();
 
         var tuple = TupleExpression().AddArguments(arguments);
@@ -50,7 +50,4 @@ public class GetHashCodeBuilder : ILink<TypeBuildingCommand, TypeDeclarationSynt
 
         return next(request, context);
     }
-
-    public ArgumentSyntax BuildIdentifierArgument(Identifier identifier)
-        => Argument(IdentifierName(identifier.CapitalizedName));
 }

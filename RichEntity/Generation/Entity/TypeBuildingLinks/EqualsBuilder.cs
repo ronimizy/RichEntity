@@ -59,12 +59,10 @@ public class EqualsBuilder : ILink<TypeBuildingCommand, TypeDeclarationSyntax>
     {
         var memberAccess = MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
-            MemberBindingExpression(IdentifierName(identifier.CapitalizedName)),
+            MemberBindingExpression(identifier.GetIdentifierName()),
             MethodIdentifierName);
 
-        var invocation = InvocationExpression(memberAccess)
-            .AddArgumentListArguments(Argument(IdentifierName(identifier.CapitalizedName)));
-
+        var invocation = InvocationExpression(memberAccess).AddArgumentListArguments(identifier.GetArgument());
         var conditionalAccess = ConditionalAccessExpression(ParameterIdentifier, invocation);
 
         return ParenthesizedExpression(BinaryExpression(

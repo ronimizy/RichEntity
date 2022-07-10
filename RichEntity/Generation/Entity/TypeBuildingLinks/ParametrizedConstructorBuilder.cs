@@ -49,7 +49,7 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
             .ToArray();
 
         ParameterSyntax[] parameters = request.Identifiers
-            .Select(BuildIdentifierParameter)
+            .Select(i => i.GetParameter(false))
             .ToArray();
 
         StatementSyntax[] assignments = request.Identifiers
@@ -96,23 +96,17 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
         return next(request, context);
     }
 
-    private static ParameterSyntax BuildIdentifierParameter(Identifier identifier)
-    {
-        return Parameter(Identifier(identifier.LowercasedName))
-            .WithType(IdentifierName(identifier.Type.Name));
-    }
-
     private static StatementSyntax BuildIdentifierAssignmentStatement(Identifier identifier)
     {
-        var left = IdentifierName(identifier.CapitalizedName);
-        var right = IdentifierName(identifier.LowercasedName);
+        var left = identifier.GetIdentifierName();
+        var right = identifier.GetIdentifierName(false);
         
         return ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, left, right));
     }
     
     private static ArgumentSyntax BuildIdentifierArgument(Identifier identifier)
     {
-        return Argument(IdentifierName(identifier.LowercasedName))
+        return identifier.GetArgument(false)
             .WithNameColon(NameColon(IdentifierName(identifier.LowercasedName)));
     }
 

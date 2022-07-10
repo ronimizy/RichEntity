@@ -65,10 +65,7 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
 
     private static MemberDeclarationSyntax BuidlIdentifierProperty(Identifier identifier, AccessorListSyntax accessors)
     {
-        var type = IdentifierName(identifier.Type.Name);
-        var name = Identifier(identifier.CapitalizedName);
-
-        return PropertyDeclaration(type, name)
+        return PropertyDeclaration(identifier.GetTypeIdentifierName(), identifier.GetIdentifier())
             .WithModifiers(Modifiers)
             .WithAccessorList(accessors);
     }
