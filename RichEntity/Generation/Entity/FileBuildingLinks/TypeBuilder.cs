@@ -31,11 +31,12 @@ public class ClassBuilder : ILink<FileBuildingCommand, CompilationUnitSyntax>
         var namespaceIdentifier = IdentifierName(request.Symbol.ContainingNamespace.GetFullyQualifiedName());
         var namespaceDeclaration = NamespaceDeclaration(namespaceIdentifier);
         var declaration = request.Symbol.ToSyntax().WithModifiers(modifiers);
+        
         var command = new TypeBuildingCommand
         (
             request.Syntax,
             request.Symbol,
-            request.IdentifierSymbol,
+            request.Identifiers,
             declaration,
             request.Context.Compilation
         );

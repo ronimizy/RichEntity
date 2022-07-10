@@ -22,7 +22,7 @@ public class TypePreconditionFilter : ILink<FileBuildingCommand, CompilationUnit
         (
             request.Syntax,
             request.Symbol,
-            request.IdentifierSymbol,
+            request.Identifiers,
             request.Context
         );
         

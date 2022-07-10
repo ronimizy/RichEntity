@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using RichEntity.Analysis.Entity;
 using RichEntity.Analyzers.Tests.Tools;
-using RichEntity.Generation.Entity;
+using RichEntity.Generation.Entity.SourceGenerators;
 using RichEntity.Utility;
 
 namespace RichEntity.Analyzers.Tests;
@@ -43,7 +43,12 @@ public class EntityGeneratorTests
             out ImmutableArray<Diagnostic> diagnostics,
             new EntitySourceGenerator());
 
-        var analyzedComp = newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PartialTypeAnalyzer()));
+        var analyzedComp =
+            newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(
+                new PartialTypeAnalyzer(),
+                new KeyEntityTypeAnalyzer(),
+                new CompositeEntityImplementationAnalyzer())
+            );
 
         IEnumerable<SyntaxTree> newFiles = newComp.SyntaxTrees
             .Where(t => Path.GetFileName(t.FilePath).EndsWith(Constants.FilenameSuffix));
@@ -56,12 +61,13 @@ public class EntityGeneratorTests
             Console.WriteLine(new string('-', 30));
         }
 
-        foreach (var diagnostic in diagnostics.Where(d => d.Severity is DiagnosticSeverity.Error))
+        foreach (var diagnostic in diagnostics.Where(d
+                     => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning))
         {
             Console.WriteLine(diagnostic);
         }
 
-        Assert.False(diagnostics.Any(d => d.Severity is DiagnosticSeverity.Error));
+        Assert.False(diagnostics.Any(d => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning));
     }
 
     private static Compilation RunGenerators(

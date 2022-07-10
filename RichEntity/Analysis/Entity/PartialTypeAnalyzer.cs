@@ -13,7 +13,7 @@ public class PartialTypeAnalyzer : DiagnosticAnalyzer
 {
     public const string DiagnosticId = "RE2000";
     public const string Title = "TypeMustBePartial";
-    public const string Format = "Type \"{0}\" must be partial";
+    public const string Format = "Type \"{0}\" must be partial to be a generated entity";
 
     public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
         DiagnosticId, Title, Format, "EntityGeneration", DiagnosticSeverity.Error, true);
@@ -31,15 +31,18 @@ public class PartialTypeAnalyzer : DiagnosticAnalyzer
         {
             var entityInterface = ctx.Compilation
                 .GetTypeByMetadataName(Constants.EntityInterfaceFullyQualifiedName);
+            
+            var compositeEntityInterface = ctx.Compilation
+                .GetTypeByMetadataName(Constants.CompositeEntityInterfaceFullyQualifiedName);
+            
+            if (entityInterface is null || compositeEntityInterface is null)
+                return;
 
-            if (entityInterface is not null)
-            {
-                ctx.RegisterSyntaxNodeAction(ProcessNode,
-                    SyntaxKind.ClassDeclaration,
-                    SyntaxKind.StructDeclaration,
-                    SyntaxKind.RecordDeclaration,
-                    SyntaxKind.RecordStructDeclaration);
-            }
+            ctx.RegisterSyntaxNodeAction(ProcessNode,
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.StructDeclaration,
+                SyntaxKind.RecordDeclaration,
+                SyntaxKind.RecordStructDeclaration);
         });
     }
 
@@ -51,12 +54,14 @@ public class PartialTypeAnalyzer : DiagnosticAnalyzer
         if (context.SemanticModel.GetDeclaredSymbol(context.Node) is not INamedTypeSymbol typeSymbol)
             return;
 
-        var entityInterfaceSymbol = context.Compilation.GetTypeByMetadataName(Constants.EntityInterfaceFullyQualifiedName);
+        var entityInterfaceSymbol = context.Compilation
+            .GetTypeByMetadataName(Constants.EntityInterfaceFullyQualifiedName)!;
+        
+        var compositeEntityInterfaceSymbol = context.Compilation
+            .GetTypeByMetadataName(Constants.CompositeEntityInterfaceFullyQualifiedName)!;
 
-        if (entityInterfaceSymbol is null)
-            return;
-
-        if (!typeSymbol.AllInterfaces.Any(i => i.IsAssignableTo(entityInterfaceSymbol)))
+        if (!typeSymbol.AllInterfaces.Any(i => i.IsAssignableTo(entityInterfaceSymbol)) &&
+            !typeSymbol.AllInterfaces.Any(i => i.IsAssignableTo(compositeEntityInterfaceSymbol)))
             return;
 
         if (Conforming(syntax))

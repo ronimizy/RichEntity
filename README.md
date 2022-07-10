@@ -19,16 +19,24 @@ public partial class Sample : IEquatable<Sample>
 {
     public Int32 Id { get; protected init; }
 
+#pragma warning disable CS8618
     protected Sample(Int32 id)
+#pragma warning restore CS8618
     {
         Id = id;
+    }
+
+#pragma warning disable CS8618
+    protected Sample()
+#pragma warning restore CS8618
+    {
     }
 
 #nullable enable
     public bool Equals(Sample? other)
 #nullable restore
     {
-        return other?.Id.Equals(Id) ?? false;
+        return (other?.Id.Equals(Id) ?? false);
     }
 
 #nullable enable
@@ -38,7 +46,7 @@ public partial class Sample : IEquatable<Sample>
         return Equals(other as Sample);
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    public override int GetHashCode() => (Id).GetHashCode();
 }
 ```
 
@@ -60,18 +68,26 @@ public partial class Sample : IEntity<int> { }
 ```csharp
 public partial class Sample : IEquatable<Sample>
 {
-    public Int32 Id { get; protected init; }
+    public Int32 Id { get; init; }
 
-    public Sample(Int32 id)
+#pragma warning disable CS8618
+    protected Sample(Int32 id)
+#pragma warning restore CS8618
     {
         Id = id;
+    }
+
+#pragma warning disable CS8618
+    protected Sample()
+#pragma warning restore CS8618
+    {
     }
 
 #nullable enable
     public bool Equals(Sample? other)
 #nullable restore
     {
-        return other?.Id.Equals(Id) ?? false;
+        return (other?.Id.Equals(Id) ?? false);
     }
 
 #nullable enable
@@ -81,7 +97,7 @@ public partial class Sample : IEquatable<Sample>
         return Equals(other as Sample);
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    public override int GetHashCode() => (Id).GetHashCode();
 }
 ```
 
@@ -98,22 +114,30 @@ To configure generated identifier decorate type with `ConfigureIdAttribute`.
 [ConfigureId(SetterAccessibility = Accessibility.Internal, SetterType = SetterType.Set)]
 public partial class Sample : IEntity<int> { }
 ```
-
+    
 ```csharp
 public partial class Sample : IEquatable<Sample>
 {
     public Int32 Id { get; internal set; }
 
+#pragma warning disable CS8618
     protected Sample(Int32 id)
+#pragma warning restore CS8618
     {
         Id = id;
+    }
+
+#pragma warning disable CS8618
+    protected Sample()
+#pragma warning restore CS8618
+    {
     }
 
 #nullable enable
     public bool Equals(Sample? other)
 #nullable restore
     {
-        return other?.Id.Equals(Id) ?? false;
+        return (other?.Id.Equals(Id) ?? false);
     }
 
 #nullable enable
@@ -123,6 +147,62 @@ public partial class Sample : IEquatable<Sample>
         return Equals(other as Sample);
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    public override int GetHashCode() => (Id).GetHashCode();
+}
+```
+
+## Composite key entities
+For entities with composite key, you can use an `IEntity` interface with `KeyProperty` attribute. \
+It will generate a constructor, an `Equals` implemetation and a `GetHashCode` implementation for that property. \
+For properties of type `IEntity<TIdentifier>` the property of type `TIdentifier` will be generated as well 
+(and it will be used in all implementations listed above).
+
+```csharp
+public partial class C : IEntity
+{
+    [KeyProperty]
+    public Sample Sample { get; init; }
+
+    [KeyProperty]
+    public int Composite { get; init; }
+}
+```
+
+This will generate:
+
+```csharp
+public partial class C : IEquatable<C>
+{
+    public Int32 SampleId { get; protected init; }
+
+#pragma warning disable CS8618
+    protected C(Int32 composite, Int32 sampleId)
+#pragma warning restore CS8618
+    {
+        Composite = composite;
+        SampleId = sampleId;
+    }
+
+#pragma warning disable CS8618
+    protected C()
+#pragma warning restore CS8618
+    {
+    }
+
+#nullable enable
+    public bool Equals(C? other)
+#nullable restore
+    {
+        return (other?.Composite.Equals(Composite) ?? false) && (other?.SampleId.Equals(SampleId) ?? false);
+    }
+
+#nullable enable
+    public override bool Equals(object? other)
+#nullable restore
+    {
+        return Equals(other as C);
+    }
+
+    public override int GetHashCode() => (Composite, SampleId).GetHashCode();
 }
 ```
