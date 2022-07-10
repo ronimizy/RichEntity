@@ -1,10 +1,11 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RichEntity.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace RichEntity.Generation.Entity.Models;
 
-public record Identifier(string CapitalizedName, string LowercasedName, ITypeSymbol Type)
+public record Identifier(string CapitalizedName, string LowercasedName, ITypeSymbol Type) : IEquatable<IPropertySymbol>
 {
     public virtual ArgumentSyntax GetArgument(bool capitalized = true)
         => Argument(IdentifierName(capitalized ? CapitalizedName : LowercasedName));
@@ -23,4 +24,12 @@ public record Identifier(string CapitalizedName, string LowercasedName, ITypeSym
 
     public virtual IdentifierNameSyntax GetTypeIdentifierName()
         => IdentifierName(Type.Name);
+
+    public bool Equals(IPropertySymbol? symbol)
+    {
+        if (symbol is null)
+            return false;
+        
+        return symbol.Name.Equals(CapitalizedName) && symbol.Type.EqualsDefault(Type);
+    }
 }
