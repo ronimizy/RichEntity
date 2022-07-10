@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using NUnit.Framework;
 using RichEntity.Analysis.Entity;
 using RichEntity.Analyzers.Tests.Tools;
-using RichEntity.Generation.Entity;
 using RichEntity.Generation.Entity.SourceGenerators;
 using RichEntity.Utility;
 
@@ -42,7 +41,7 @@ public class EntityGeneratorTests
         var newComp = RunGenerators(
             compilation,
             out ImmutableArray<Diagnostic> diagnostics,
-            new DirectEntitySourceGenerator());
+            new EntitySourceGenerator());
 
         var analyzedComp = newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PartialTypeAnalyzer()));
 
@@ -57,12 +56,12 @@ public class EntityGeneratorTests
             Console.WriteLine(new string('-', 30));
         }
 
-        foreach (var diagnostic in diagnostics.Where(d => d.Severity is DiagnosticSeverity.Error))
+        foreach (var diagnostic in diagnostics.Where(d => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning))
         {
             Console.WriteLine(diagnostic);
         }
 
-        Assert.False(diagnostics.Any(d => d.Severity is DiagnosticSeverity.Error));
+        Assert.False(diagnostics.Any(d => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning));
     }
 
     private static Compilation RunGenerators(
