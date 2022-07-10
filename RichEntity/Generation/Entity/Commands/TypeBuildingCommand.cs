@@ -7,6 +7,6 @@ namespace RichEntity.Generation.Entity.Commands;
 public record struct TypeBuildingCommand(
     TypeDeclarationSyntax Syntax,
     INamedTypeSymbol Symbol,
-    IReadOnlyCollection<Identifier> Identifiers,
+    IReadOnlyList<Identifier> Identifiers,
     TypeDeclarationSyntax Root,
     Compilation Compilation);

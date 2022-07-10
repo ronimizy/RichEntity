@@ -7,6 +7,6 @@ namespace RichEntity.Generation.Entity.Commands;
 public record struct FileBuildingCommand(
     TypeDeclarationSyntax Syntax,
     INamedTypeSymbol Symbol,
-    IReadOnlyCollection<Identifier> Identifiers,
+    IReadOnlyList<Identifier> Identifiers,
     CompilationUnitSyntax Root,
     GeneratorExecutionContext Context);
