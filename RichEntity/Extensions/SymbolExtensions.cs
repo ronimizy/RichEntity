@@ -12,4 +12,7 @@ public static class SymbolExtensions
 
     public static bool EqualsDefault(this ISymbol left, ISymbol? right)
         => left.Equals(right, SymbolEqualityComparer.Default);
+
+    public static bool HasAttribute(this ISymbol symbol, ITypeSymbol? attribute)
+        => symbol.GetAttributes().Any(a => attribute?.EqualsDefault(a.AttributeClass) ?? false);
 }

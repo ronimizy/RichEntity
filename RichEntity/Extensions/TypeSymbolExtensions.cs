@@ -7,25 +7,28 @@ namespace RichEntity.Extensions;
 
 public static class TypeSymbolExtensions
 {
-    public static bool IsAssignableTo(this INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol baseType)
+    public static bool IsAssignableTo(this ITypeSymbol typeSymbol, ITypeSymbol baseType)
     {
-        if (namedTypeSymbol.EqualsDefault(baseType))
+        if (typeSymbol.EqualsDefault(baseType))
             return true;
+
+        if (typeSymbol.BaseType is not null && typeSymbol.BaseType.IsAssignableTo(baseType))
+            return true;
+
+        if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)
+            return false;
 
         if (namedTypeSymbol.ConstructedFrom.EqualsDefault(baseType))
             return true;
 
-        if (namedTypeSymbol.BaseType is not null && namedTypeSymbol.BaseType.IsAssignableTo(baseType))
-            return true;
-
-        if (!namedTypeSymbol.ConstructedFrom.EqualsDefault(namedTypeSymbol) &&
+        if (!namedTypeSymbol.ConstructedFrom.EqualsDefault(typeSymbol) &&
             namedTypeSymbol.ConstructedFrom.IsAssignableTo(baseType))
             return true;
 
-        return false;
+        return typeSymbol.AllInterfaces.Any(s => s.IsAssignableTo(baseType));
     }
 
-    public static bool DerivesFrom(this INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol baseClass)
+    public static bool DerivesFrom(this ITypeSymbol namedTypeSymbol, ITypeSymbol baseClass)
     {
         var derivative = namedTypeSymbol;
 
@@ -74,7 +77,4 @@ public static class TypeSymbolExtensions
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-
-    public static bool HasAttribute(this ITypeSymbol symbol, ITypeSymbol? attribute)
-        => symbol.GetAttributes().Any(a => attribute?.EqualsDefault(a.AttributeClass) ?? false);
 }
