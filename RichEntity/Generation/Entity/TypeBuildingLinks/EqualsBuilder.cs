@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RichEntity.Generation.Entity.Commands;
+using RichEntity.Generation.Entity.Models;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace RichEntity.Generation.Entity.TypeBuildingLinks;
@@ -11,30 +12,22 @@ public class EqualsBuilder : ILink<TypeBuildingCommand, TypeDeclarationSyntax>
 {
     private static readonly PredefinedTypeSyntax ReturnType = PredefinedType(Token(SyntaxKind.BoolKeyword));
     private static readonly SyntaxToken MethodIdentifier = Identifier("Equals");
+    private static readonly IdentifierNameSyntax MethodIdentifierName = IdentifierName("Equals");
     private static readonly ParameterSyntax Parameter = Parameter(Identifier("other"));
+    private static readonly NameSyntax ParameterIdentifier = IdentifierName("other");
+    private static readonly LiteralExpressionSyntax FalseLiteral = LiteralExpression(SyntaxKind.FalseLiteralExpression);
+    
     private static readonly SyntaxToken DisableNullableTriviaBraceToken;
-    private static readonly BinaryExpressionSyntax Expression;
     private static readonly SyntaxTokenList Modifiers;
 
     static EqualsBuilder()
     {
-        var memberAccess = MemberAccessExpression
-        (
-            SyntaxKind.SimpleMemberAccessExpression,
-            MemberBindingExpression(IdentifierName("Id")),
-            IdentifierName("Equals")
-        );
-
-        var invocation = InvocationExpression(memberAccess).AddArgumentListArguments(Argument(IdentifierName("Id")));
-        var left = ConditionalAccessExpression(IdentifierName("other"), invocation);
-        var falseExpression = LiteralExpression(SyntaxKind.FalseLiteralExpression);
-
         var enableDirectiveTrivia = Trivia(NullableDirectiveTrivia(Token(SyntaxKind.EnableKeyword), true));
         var restoreDirectiveTrivia = Trivia(NullableDirectiveTrivia(Token(SyntaxKind.RestoreKeyword), true));
 
-        Expression = BinaryExpression(SyntaxKind.CoalesceExpression, left, falseExpression);
         Modifiers = TokenList(Token(TriviaList(enableDirectiveTrivia), SyntaxKind.PublicKeyword, TriviaList()));
-        DisableNullableTriviaBraceToken = Token(TriviaList(restoreDirectiveTrivia), SyntaxKind.OpenBraceToken, TriviaList());
+        DisableNullableTriviaBraceToken = Token(
+            TriviaList(restoreDirectiveTrivia), SyntaxKind.OpenBraceToken, TriviaList());
     }
 
     public TypeDeclarationSyntax Process(
@@ -42,7 +35,11 @@ public class EqualsBuilder : ILink<TypeBuildingCommand, TypeDeclarationSyntax>
         SynchronousContext context,
         LinkDelegate<TypeBuildingCommand, SynchronousContext, TypeDeclarationSyntax> next)
     {
-        var body = Block(SingletonList(ReturnStatement(Expression)))
+        var equalityCheck = request.Identifiers
+            .Select(BuildIdentifierEqualityCheck)
+            .Aggregate((a, b) => BinaryExpression(SyntaxKind.LogicalAndExpression, a, b));
+
+        var body = Block(SingletonList(ReturnStatement(equalityCheck)))
             .WithOpenBraceToken(DisableNullableTriviaBraceToken);
 
         var declaration = MethodDeclaration(ReturnType, MethodIdentifier)
@@ -56,5 +53,23 @@ public class EqualsBuilder : ILink<TypeBuildingCommand, TypeDeclarationSyntax>
         };
 
         return next(request, context);
+    }
+
+    private static ExpressionSyntax BuildIdentifierEqualityCheck(Identifier identifier)
+    {
+        var memberAccess = MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            MemberBindingExpression(IdentifierName(identifier.CapitalizedName)),
+            MethodIdentifierName);
+
+        var invocation = InvocationExpression(memberAccess)
+            .AddArgumentListArguments(Argument(IdentifierName(identifier.CapitalizedName)));
+
+        var conditionalAccess = ConditionalAccessExpression(ParameterIdentifier, invocation);
+
+        return ParenthesizedExpression(BinaryExpression(
+            SyntaxKind.CoalesceExpression, 
+            conditionalAccess,
+            FalseLiteral));
     }
 }

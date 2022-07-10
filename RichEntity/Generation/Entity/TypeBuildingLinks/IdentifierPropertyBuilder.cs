@@ -5,6 +5,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RichEntity.Annotations;
 using RichEntity.Extensions;
 using RichEntity.Generation.Entity.Commands;
+using RichEntity.Generation.Entity.Extensions;
+using RichEntity.Generation.Entity.Models;
 using RichEntity.Utility;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using Accessibility = RichEntity.Annotations.Accessibility;
@@ -14,16 +16,21 @@ namespace RichEntity.Generation.Entity.TypeBuildingLinks;
 public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarationSyntax>
 {
     private static readonly AccessorDeclarationSyntax GetAccessor;
-    private static readonly SyntaxToken PropertyNameIdentifier;
     private static readonly SyntaxTokenList Modifiers;
+    
+    private readonly IChain<GetIdentifiersCommand, IEnumerable<Identifier>> _getIdentifiersChain;
 
     static IdentifierPropertyBuilder()
     {
         GetAccessor = AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
 
-        PropertyNameIdentifier = Identifier("Id");
         Modifiers = TokenList(Token(SyntaxKind.PublicKeyword));
+    }
+
+    public IdentifierPropertyBuilder(IChain<GetIdentifiersCommand, IEnumerable<Identifier>> getIdentifiersChain)
+    {
+        _getIdentifiersChain = getIdentifiersChain;
     }
 
     public TypeDeclarationSyntax Process(
@@ -31,7 +38,6 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
         SynchronousContext context,
         LinkDelegate<TypeBuildingCommand, SynchronousContext, TypeDeclarationSyntax> next)
     {
-        var identifierName = IdentifierName(request.IdentifierSymbol.Name);
         var setAccessor = GetSetAccessor(request);
 
         var accessors = AccessorList(List(new[]
@@ -40,16 +46,31 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
             setAccessor,
         }));
 
-        var property = PropertyDeclaration(identifierName, PropertyNameIdentifier)
-            .WithModifiers(Modifiers)
-            .WithAccessorList(accessors);
+        Identifier[] baseIdentifiers = _getIdentifiersChain
+            .ProcessOrEmpty(request.Symbol.BaseType, request.Compilation)
+            .ToArray();
+
+        MemberDeclarationSyntax[] properties = request.Identifiers
+            .Where(i => !baseIdentifiers.Contains(i))
+            .Select(i => BuidlIdentifierProperty(i, accessors))
+            .ToArray();
 
         request = request with
         {
-            Root = request.Root.AddMembers(property)
+            Root = request.Root.AddMembers(properties)
         };
 
         return next(request, context);
+    }
+
+    private static MemberDeclarationSyntax BuidlIdentifierProperty(Identifier identifier, AccessorListSyntax accessors)
+    {
+        var type = IdentifierName(identifier.Type.Name);
+        var name = Identifier(identifier.CapitalizedName);
+
+        return PropertyDeclaration(type, name)
+            .WithModifiers(Modifiers)
+            .WithAccessorList(accessors);
     }
 
     private static AccessorDeclarationSyntax GetSetAccessor(TypeBuildingCommand request)
