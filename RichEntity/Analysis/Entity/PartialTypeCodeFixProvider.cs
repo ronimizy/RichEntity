@@ -21,7 +21,6 @@ public class PartialTypeCodeFixProvider : CodeFixProvider
 
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        
         context.CancellationToken.ThrowIfCancellationRequested();
         
         var diagnostic = context.Diagnostics.FirstOrDefault(d => FixableDiagnosticIds.Contains(d.Id));
