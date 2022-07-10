@@ -57,6 +57,7 @@ public class EntitySourceGenerator : GeneratorBase<FileBuildingCommand>
                 start => start
                     .Then<IdentifierCachingLink>()
                     .Then<EntityIdentifierProviderLink>()
+                    .Then<KeyPropertyIdentifierProvider>()
                     .FinishWith(Enumerable.Empty<Identifier>)
             );
 
