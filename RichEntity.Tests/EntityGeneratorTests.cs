@@ -43,7 +43,12 @@ public class EntityGeneratorTests
             out ImmutableArray<Diagnostic> diagnostics,
             new EntitySourceGenerator());
 
-        var analyzedComp = newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new PartialTypeAnalyzer()));
+        var analyzedComp =
+            newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(
+                new PartialTypeAnalyzer(),
+                new KeyEntityTypeAnalyzer(),
+                new CompositeEntityImplementationAnalyzer())
+            );
 
         IEnumerable<SyntaxTree> newFiles = newComp.SyntaxTrees
             .Where(t => Path.GetFileName(t.FilePath).EndsWith(Constants.FilenameSuffix));
@@ -56,7 +61,8 @@ public class EntityGeneratorTests
             Console.WriteLine(new string('-', 30));
         }
 
-        foreach (var diagnostic in diagnostics.Where(d => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning))
+        foreach (var diagnostic in diagnostics.Where(d
+                     => d.Severity is DiagnosticSeverity.Error or DiagnosticSeverity.Warning))
         {
             Console.WriteLine(diagnostic);
         }
