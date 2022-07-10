@@ -46,12 +46,19 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
             setAccessor,
         }));
 
-        Identifier[] baseIdentifiers = _getIdentifiersChain
-            .ProcessOrEmpty(request.Symbol.BaseType, request.Compilation)
+        IEnumerable<Identifier> baseIdentifiers = _getIdentifiersChain
+            .ProcessOrEmpty(request.Symbol.BaseType, request.Compilation);
+
+        IPropertySymbol[] members = request.Symbol.GetMembers()
+            .OfType<IPropertySymbol>()
             .ToArray();
 
+        IEnumerable<Identifier> alreadyImplementedIdentifiers = request.Identifiers
+            .Where(i => members.Any(i.Equals));
+
         MemberDeclarationSyntax[] properties = request.Identifiers
-            .Where(i => !baseIdentifiers.Contains(i))
+            .Except(baseIdentifiers)
+            .Except(alreadyImplementedIdentifiers)
             .Select(i => BuidlIdentifierProperty(i, accessors))
             .ToArray();
 
