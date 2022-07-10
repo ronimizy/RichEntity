@@ -12,3 +12,12 @@ public readonly partial record struct B : IEntity<Guid>
 {
     public B() : this(Guid.NewGuid()) { }
 }
+
+public partial class C : IEntity
+{
+    [KeyProperty]
+    public Sample Sample { get; init; }
+
+    [KeyProperty]
+    public int Composite { get; init; }
+}
