@@ -4,6 +4,9 @@ A library for reducing boilerplate when defining entities.
 It is using Roslyn's Source Generators to generate the code
 that is needed for entity definition.
 
+## NOTE!
+If your application failing to compile due to dotnet failing to locate `Microsoft.CodeAnalysis` package, update your dotnet sdk to the latest version.
+
 ## Usage 
 To generate an entity, you will need to add an `IEntity<TIdentifier>`
 to base list of your entity class.
