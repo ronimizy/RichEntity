@@ -16,19 +16,19 @@ public class KeyPropertyIdentifierProvider : ILink<GetIdentifiersCommand, IEnume
     {
         IEnumerable<Identifier> identifiers = next.Invoke(request, context);
 
-        var compositeEntityInterface = request.Compilation
+        var entityInterface = request.Compilation
             .GetTypeByMetadataName(Constants.CompositeEntityInterfaceFullyQualifiedName);
 
-        if (compositeEntityInterface is null)
+        if (entityInterface is null)
             return identifiers;
 
-        if (!request.Symbol.AllInterfaces.Any(i => i.IsAssignableTo(compositeEntityInterface)))
+        if (!request.Symbol.AllInterfaces.Any(i => i.IsAssignableTo(entityInterface)))
             return identifiers;
 
-        var entityInterface = request.Compilation
+        var genericEntityInterface = request.Compilation
             .GetTypeByMetadataName(Constants.EntityInterfaceFullyQualifiedName);
 
-        if (entityInterface is null)
+        if (genericEntityInterface is null)
             return identifiers;
 
         var attribute = request.Compilation
@@ -41,12 +41,12 @@ public class KeyPropertyIdentifierProvider : ILink<GetIdentifiersCommand, IEnume
             .Reverse()
             .OfType<IPropertySymbol>()
             .Where(s => s.HasAttribute(attribute))
-            .Select(s => SymbolToIdentifier(s, entityInterface));
+            .SelectMany(s => SymbolToIdentifiers(s, genericEntityInterface, entityInterface, attribute));
 
         return keyEntities.Concat(identifiers);
     }
 
-    private static IEnumerable<ISymbol> GetSymbolsFromAllHierarchy(INamedTypeSymbol? symbol)
+    private static IEnumerable<ISymbol> GetSymbolsFromAllHierarchy(ITypeSymbol? symbol)
     {
         while (symbol is not null)
         {
@@ -59,19 +59,36 @@ public class KeyPropertyIdentifierProvider : ILink<GetIdentifiersCommand, IEnume
         }
     }
 
-    private static Identifier SymbolToIdentifier(IPropertySymbol symbol, INamedTypeSymbol entityInterface)
+    private static IEnumerable<Identifier> SymbolToIdentifiers(
+        IPropertySymbol symbol,
+        INamedTypeSymbol genericEntityInterface,
+        INamedTypeSymbol entityInterface,
+        INamedTypeSymbol keyPropertyAttribute)
+    {
+        if (symbol.Type.IsAssignableTo(entityInterface))
+        {
+            return GetSymbolsFromAllHierarchy(symbol.Type)
+                .Where(x => x.HasAttribute(keyPropertyAttribute))
+                .OfType<IPropertySymbol>()
+                .SelectMany(x => SymbolToIdentifiers(x, genericEntityInterface, entityInterface, keyPropertyAttribute));
+        }
+
+        return Enumerable.Repeat(SymbolToIdentifier(symbol, genericEntityInterface), 1);
+    }
+
+    private static Identifier SymbolToIdentifier(IPropertySymbol symbol, INamedTypeSymbol genericEntityInterface)
     {
         string capitalized;
         string lowercased;
         ITypeSymbol identifierType;
 
-        if (symbol.Type.IsAssignableTo(entityInterface))
+        if (symbol.Type.IsAssignableTo(genericEntityInterface))
         {
             capitalized = $"{char.ToUpper(symbol.Name[0])}{symbol.Name.Substring(1)}Id";
             lowercased = $"{char.ToLower(symbol.Name[0])}{symbol.Name.Substring(1)}Id";
 
             var concreteInterface = symbol.Type.AllInterfaces
-                .Single(i => i.IsAssignableTo(entityInterface));
+                .Single(i => i.IsAssignableTo(genericEntityInterface));
 
             identifierType = concreteInterface.TypeArguments.Single();
         }

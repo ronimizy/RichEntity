@@ -8,8 +8,8 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
-      <PackageReference Include="RichEntity" Version="1.1.0" />
-      <PackageReference Include="RichEntity.EntityFrameworkCore" Version="0.0.1-alpha" />
+      <PackageReference Include="RichEntity" Version="1.1.1" />
+<!--      <PackageReference Include="RichEntity.EntityFrameworkCore" Version="0.0.1-alpha" />-->
     </ItemGroup>
     
     <ItemGroup>

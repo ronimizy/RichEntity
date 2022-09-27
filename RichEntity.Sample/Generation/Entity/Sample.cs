@@ -19,5 +19,16 @@ public partial class C : IEntity
     public Sample Sample { get; init; }
 
     [KeyProperty]
-    public int Composite { get; init; }
+    public B Composite { get; init; }
+}
+
+public partial class D : IEntity
+{
+    public D(C c) : this(sampleId: c.SampleId, compositeId: c.CompositeId)
+    {
+        C = c;
+    }
+
+    [KeyProperty]
+    public C C { get; set; }
 }
