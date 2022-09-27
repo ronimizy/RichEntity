@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RichEntity.Annotations;
 using RichEntity.Extensions;
+using Sigil;
 
 namespace RichEntity.ObjectCreation;
 
@@ -100,55 +101,51 @@ public static class ObjectCreator
 
         Action<object, object?> action = member switch
         {
-            PropertyInfo property => (x, v) => property.SetValue(x, v),
-            FieldInfo field => (x, v) => field.SetValue(x, v),
+            PropertyInfo property => CreateMethodForProperty(key, property),
+            FieldInfo field => CreateMethodForField(key, field),
             _ => throw new NotSupportedException(),
         };
 
         return arg => instance => action.Invoke(instance, arg);
     }
-    
-    /*
-     *  Uncomment when Sigil generation issue is resolved
-     */
 
-    // private static Action<object, object?> CreateMethodForProperty(MemberKey key, PropertyInfo info)
-    // {
-    //     File.WriteAllText("/Users/george/Desktop/file.txt", "adawdwad");
-    //
-    //     Emit<Action<object, object?>> emit = Emit<Action<object, object?>>
-    //         .NewDynamicMethod(info.SetMethod.Name)
-    //         .LoadArgument(0);
-    //
-    //     emit = key.Type.IsValueType
-    //         ? emit.Unbox(key.Type)
-    //         : emit.CastClass(key.Type);
-    //
-    //     emit = emit.LoadArgument(1);
-    //
-    //     emit = info.PropertyType.IsValueType
-    //         ? emit.UnboxAny(info.PropertyType)
-    //         : emit.CastClass(info.PropertyType);
-    //
-    //     return emit.Call(info.SetMethod).Return().CreateDelegate();
-    // }
-    //
-    // private static Action<object, object?> CreateMethodForField(MemberKey key, FieldInfo info)
-    // {
-    //     Emit<Action<object, object?>> emit = Emit<Action<object, object?>>
-    //         .NewDynamicMethod()
-    //         .LoadArgument(0);
-    //
-    //     emit = key.Type.IsValueType
-    //         ? emit.Unbox(key.Type)
-    //         : emit.CastClass(key.Type);
-    //
-    //     emit = emit.LoadArgument(1);
-    //
-    //     emit = info.FieldType.IsValueType
-    //         ? emit.UnboxAny(info.FieldType)
-    //         : emit.CastClass(info.FieldType);
-    //
-    //     return emit.StoreField(info).Return().CreateDelegate();
-    // }
+    private static Action<object, object?> CreateMethodForProperty(MemberKey key, PropertyInfo info)
+    {
+        File.WriteAllText("/Users/george/Desktop/file.txt", "adawdwad");
+
+        Emit<Action<object, object?>> emit = Emit<Action<object, object?>>
+            .NewDynamicMethod(info.SetMethod.Name)
+            .LoadArgument(0);
+
+        emit = key.Type.IsValueType
+            ? emit.Unbox(key.Type)
+            : emit.CastClass(key.Type);
+
+        emit = emit.LoadArgument(1);
+
+        emit = info.PropertyType.IsValueType
+            ? emit.UnboxAny(info.PropertyType)
+            : emit.CastClass(info.PropertyType);
+
+        return emit.Call(info.SetMethod).Return().CreateDelegate();
+    }
+
+    private static Action<object, object?> CreateMethodForField(MemberKey key, FieldInfo info)
+    {
+        Emit<Action<object, object?>> emit = Emit<Action<object, object?>>
+            .NewDynamicMethod()
+            .LoadArgument(0);
+
+        emit = key.Type.IsValueType
+            ? emit.Unbox(key.Type)
+            : emit.CastClass(key.Type);
+
+        emit = emit.LoadArgument(1);
+
+        emit = info.FieldType.IsValueType
+            ? emit.UnboxAny(info.FieldType)
+            : emit.CastClass(info.FieldType);
+
+        return emit.StoreField(info).Return().CreateDelegate();
+    }
 }
