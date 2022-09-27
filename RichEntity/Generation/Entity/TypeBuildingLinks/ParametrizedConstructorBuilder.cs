@@ -6,6 +6,7 @@ using RichEntity.Annotations;
 using RichEntity.Extensions;
 using RichEntity.Generation.Entity.Commands;
 using RichEntity.Generation.Entity.Extensions;
+using RichEntity.ObjectCreation;
 using RichEntity.Utility;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using Accessibility = RichEntity.Annotations.Accessibility;
@@ -17,7 +18,7 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
 {
     private static readonly SyntaxTrivia PragmaDisable;
     private static readonly SyntaxToken PragmaRestoreToken;
-    
+
     private readonly IChain<GetIdentifiersCommand, IEnumerable<Identifier>> _getIdentifiersChain;
 
     static ParametrizedConstructorBuilder()
@@ -57,19 +58,19 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
             .Select(BuildIdentifierAssignmentStatement)
             .ToArray();
 
-        var body = Block(assignments);
-        SyntaxToken accessModifier;
-
-        switch (GetAccessModifier(request))
+        (BlockSyntax body, SyntaxToken accessModifier) = GetAccessModifier(request) switch
         {
-            case var x and (SyntaxKind.PublicKeyword or SyntaxKind.InternalKeyword):
-                accessModifier = Token(x);
-                break;
-            case var x:
-                accessModifier = Token(TriviaList(PragmaDisable), x, TriviaList());
-                body = body.WithOpenBraceToken(PragmaRestoreToken);
-                break;
-        }
+            var x and (SyntaxKind.PublicKeyword or SyntaxKind.InternalKeyword) =>
+            (
+                Block(assignments),
+                Token(x)
+            ),
+            var x =>
+            (
+                Block(assignments).WithOpenBraceToken(PragmaRestoreToken),
+                Token(TriviaList(PragmaDisable), x, TriviaList())
+            ),
+        };
 
         var declaration = ConstructorDeclaration(Identifier(request.Symbol.Name))
             .AddModifiers(accessModifier)
@@ -100,10 +101,10 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
     {
         var left = identifier.GetIdentifierName();
         var right = identifier.GetIdentifierName(false);
-        
+
         return ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, left, right));
     }
-    
+
     private static ArgumentSyntax BuildIdentifierArgument(Identifier identifier)
     {
         return identifier.GetArgument(false)
@@ -113,7 +114,7 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
     private static bool HasParametrizedConstructor(TypeBuildingCommand request)
     {
         IReadOnlyList<Identifier> identifiers = request.Identifiers;
-        
+
         bool NeededParameterizedConstructor(IMethodSymbol symbol)
             => !identifiers.Where((t, i) => !symbol.Parameters[i].Type.EqualsDefault(t.Type)).Any();
 
@@ -136,17 +137,8 @@ public class ParametrizedConstructorBuilder : ILink<TypeBuildingCommand, TypeDec
             return accessModifier;
 
         var syntax = request.Syntax.GetAttributeSyntax(attribute, request.Compilation);
-        const string argumentName = nameof(ConfigureConstructorsAttribute.ParametrizedConstructorAccessibility);
-        var argument = syntax.GetArgumentOrDefault(argumentName);
-        var value = (argument?.Expression as MemberAccessExpressionSyntax)?.Name.ToString();
+        var attributeObject = ObjectCreator.Create<ConfigureConstructorsAttribute>(syntax, request.Compilation);
 
-        return value switch
-        {
-            nameof(Accessibility.Private) => SyntaxKind.PrivateKeyword,
-            nameof(Accessibility.Protected) => SyntaxKind.ProtectedKeyword,
-            nameof(Accessibility.Internal) => SyntaxKind.InternalKeyword,
-            nameof(Accessibility.Public) => SyntaxKind.PublicKeyword,
-            _ => accessModifier
-        };
+        return attributeObject.ParametrizedConstructorAccessibility.ToSyntaxKind(accessModifier);
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using MyAccessibility = RichEntity.Annotations.Accessibility;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace RichEntity.Extensions;
@@ -16,4 +17,16 @@ public static class AccessibilityExtensions
         Accessibility.ProtectedOrInternal => TokenList(Token(SyntaxKind.PrivateKeyword), Token(SyntaxKind.ProtectedKeyword)),
         _ => TokenList(),
     };
+
+    public static SyntaxKind ToSyntaxKind(this MyAccessibility accessibility, SyntaxKind defaultValue = default)
+    {
+        return accessibility switch
+        {
+            MyAccessibility.Private => SyntaxKind.PrivateKeyword,
+            MyAccessibility.Protected => SyntaxKind.ProtectedKeyword,
+            MyAccessibility.Internal => SyntaxKind.InternalKeyword,
+            MyAccessibility.Public => SyntaxKind.PublicKeyword,
+            _ => defaultValue,
+        };
+    }
 }

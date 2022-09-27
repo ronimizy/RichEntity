@@ -27,7 +27,7 @@ public class EntityGeneratorTests
         {
             typeof(object),
             typeof(Annotations.IEntity<>),
-            typeof(Console)
+            typeof(Console),
         };
 
         var options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
@@ -46,7 +46,6 @@ public class EntityGeneratorTests
         var analyzedComp =
             newComp.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(
                 new PartialTypeAnalyzer(),
-                new KeyEntityTypeAnalyzer(),
                 new CompositeEntityImplementationAnalyzer())
             );
 
