@@ -7,9 +7,9 @@ using RichEntity.Extensions;
 using RichEntity.Generation.Entity.Commands;
 using RichEntity.Generation.Entity.Extensions;
 using RichEntity.Generation.Entity.Models;
+using RichEntity.ObjectCreation;
 using RichEntity.Utility;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using Accessibility = RichEntity.Annotations.Accessibility;
 
 namespace RichEntity.Generation.Entity.TypeBuildingLinks;
 
@@ -17,7 +17,7 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
 {
     private static readonly AccessorDeclarationSyntax GetAccessor;
     private static readonly SyntaxTokenList Modifiers;
-    
+
     private readonly IChain<GetIdentifiersCommand, IEnumerable<Identifier>> _getIdentifiersChain;
 
     static IdentifierPropertyBuilder()
@@ -59,7 +59,7 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
         MemberDeclarationSyntax[] properties = request.Identifiers
             .Except(baseIdentifiers)
             .Except(alreadyImplementedIdentifiers)
-            .Select(i => BuidlIdentifierProperty(i, accessors))
+            .Select(i => BuildIdentifierProperty(i, accessors))
             .ToArray();
 
         request = request with
@@ -70,17 +70,28 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
         return next(request, context);
     }
 
-    private static MemberDeclarationSyntax BuidlIdentifierProperty(Identifier identifier, AccessorListSyntax accessors)
+    private static MemberDeclarationSyntax BuildIdentifierProperty(Identifier identifier, AccessorListSyntax accessors)
     {
         return PropertyDeclaration(identifier.GetTypeIdentifierName(), identifier.GetIdentifier())
             .WithModifiers(Modifiers)
             .WithAccessorList(accessors);
     }
 
-    private static AccessorDeclarationSyntax GetSetAccessor(TypeBuildingCommand request)
+    private AccessorDeclarationSyntax GetSetAccessor(TypeBuildingCommand request)
     {
-        var setterAccessModifier = GetSetterAccessModifier(request);
-        var accessorKind = GetSetterKind(request);
+        ConfigureIdAttribute? idConfiguration = null;
+
+        var attribute = request.Compilation
+            .GetTypeByMetadataName(Constants.ConfigureIdAttributeFullyQualifiedName);
+
+        if (attribute is not null && request.Symbol.HasAttribute(attribute))
+        {
+            var syntax = request.Syntax.GetAttributeSyntax(attribute, request.Compilation);
+            idConfiguration = ObjectCreator.Create<ConfigureIdAttribute>(syntax, request.Compilation);
+        }
+
+        SyntaxKind? setterAccessModifier = GetSetterAccessModifier(request, idConfiguration);
+        SyntaxKind accessorKind = GetSetterKind(idConfiguration);
 
         var setAccessor = AccessorDeclaration(accessorKind)
             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
@@ -93,51 +104,25 @@ public class IdentifierPropertyBuilder : ILink<TypeBuildingCommand, TypeDeclarat
         return setAccessor;
     }
 
-    private static SyntaxKind? GetSetterAccessModifier(TypeBuildingCommand request)
+    private static SyntaxKind? GetSetterAccessModifier(TypeBuildingCommand request, ConfigureIdAttribute? attribute)
     {
-        SyntaxKind? modifier = request.Symbol.TypeKind is TypeKind.Struct
-            ? SyntaxKind.PrivateKeyword
-            : SyntaxKind.ProtectedKeyword;
-
-        var attribute = request.Compilation
-            .GetTypeByMetadataName(Constants.ConfigureIdAttributeFullyQualifiedName);
-
-        if (attribute is null || !request.Symbol.HasAttribute(attribute))
-            return modifier;
-
-        var syntax = request.Syntax.GetAttributeSyntax(attribute, request.Compilation);
-        var argument = syntax.GetArgumentOrDefault(nameof(ConfigureIdAttribute.SetterAccessibility));
-        var value = (argument?.Expression as MemberAccessExpressionSyntax)?.Name.ToString();
-
-        return value switch
+        var modifier = request.Symbol.TypeKind switch
         {
-            nameof(Accessibility.Private) => SyntaxKind.PrivateKeyword,
-            nameof(Accessibility.Protected) => SyntaxKind.ProtectedKeyword,
-            nameof(Accessibility.Internal) => SyntaxKind.InternalKeyword,
-            nameof(Accessibility.Public) => null,
-            _ => modifier,
+            TypeKind.Struct => SyntaxKind.PrivateKeyword,
+            TypeKind.Class => SyntaxKind.ProtectedKeyword,
+            _ => throw new NotSupportedException("Only classes and structs are supported"),
+        };
+
+        return attribute?.SetterAccessibility.ToSyntaxKind(modifier) switch
+        {
+            SyntaxKind.PublicKeyword => null,
+            var x => x,
         };
     }
 
-    private static SyntaxKind GetSetterKind(TypeBuildingCommand request)
+    private static SyntaxKind GetSetterKind(ConfigureIdAttribute? attribute)
     {
-        var accessorKind = SyntaxKind.InitAccessorDeclaration;
-
-        var attribute = request.Compilation
-            .GetTypeByMetadataName(Constants.ConfigureIdAttributeFullyQualifiedName);
-
-        if (attribute is null || !request.Symbol.HasAttribute(attribute))
-            return accessorKind;
-
-        var syntax = request.Syntax.GetAttributeSyntax(attribute, request.Compilation);
-        var argument = syntax.GetArgumentOrDefault(nameof(ConfigureIdAttribute.SetterType));
-        var value = (argument?.Expression as MemberAccessExpressionSyntax)?.Name.ToString();
-
-        return value switch
-        {
-            nameof(SetterType.Init) => SyntaxKind.InitAccessorDeclaration,
-            nameof(SetterType.Set) => SyntaxKind.SetAccessorDeclaration,
-            _ => accessorKind
-        };
+        const SyntaxKind accessorKind = SyntaxKind.InitAccessorDeclaration;
+        return attribute?.SetterType.ToSyntaxKind(accessorKind) ?? accessorKind;
     }
 }
