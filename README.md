@@ -1,14 +1,14 @@
 # RichEntity [![Nuget](https://img.shields.io/nuget/v/RichEntity?style=flat-square)](https://www.nuget.org/packages/RichEntity)
 
-A library for reducing boilerplate when defining entities.
-It is using Roslyn's Source Generators to generate the code
-that is needed for entity definition.
+A library for reducing boilerplate code when defining entities.
+It uses Roslyn's Source Generators to generate the code
+needed for entity definition.
 
 ## NOTE!
-If your application failing to compile due to dotnet failing to locate `Microsoft.CodeAnalysis` package, update your dotnet sdk to the latest version.
+If your application failing to compile becuase of dotnet failing to locate `Microsoft.CodeAnalysis` package, please update your dotnet sdk to the latest version.
 
 ## Usage 
-To generate an entity, you will need to add an `IEntity<TIdentifier>`
+To generate an entity, you need to add an `IEntity<TIdentifier>`
 to base list of your entity class.
 
 ```csharp
@@ -53,10 +53,10 @@ public partial class Sample : IEquatable<Sample>
 }
 ```
 
-You can customize generated code via attributes.
+You can customize generated code with attributes.
 
 ### ConfigureConstructorsAttribute
-To configure generated entity constructors decorate type with 
+To configure generated entity constructors, decorate type with 
 `ConfigureConstructorsAttribute`.
 
 #### Settings:
@@ -105,7 +105,7 @@ public partial class Sample : IEquatable<Sample>
 ```
 
 ### ConfigureIdAttribute
-To configure generated identifier decorate type with `ConfigureIdAttribute`.
+To configure generated identifier, decorate type with `ConfigureIdAttribute`.
 
 #### Settings:
 - SetterAccessibility \
@@ -155,9 +155,9 @@ public partial class Sample : IEquatable<Sample>
 ```
 
 ## Composite key entities
-For entities with composite key, you can use an `IEntity` interface with `KeyProperty` attribute. \
+For entities with composite key, you can use `IEntity` interface with `KeyProperty` attribute. \
 It will generate a constructor, an `Equals` implemetation and a `GetHashCode` implementation for that property. \
-For properties of type `IEntity<TIdentifier>` the property of type `TIdentifier` will be generated as well 
+For properties of type `IEntity<TIdentifier>`, the property of type `TIdentifier` will be generated as well 
 (and it will be used in all implementations listed above).
 
 ```csharp
