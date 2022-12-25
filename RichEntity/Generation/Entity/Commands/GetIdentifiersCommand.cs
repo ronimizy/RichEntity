@@ -2,4 +2,4 @@ using Microsoft.CodeAnalysis;
 
 namespace RichEntity.Generation.Entity.Commands;
 
-public record GetIdentifiersCommand(INamedTypeSymbol Symbol, Compilation Compilation);
+public record struct GetIdentifiersCommand(INamedTypeSymbol Symbol, Compilation Compilation);

@@ -41,6 +41,6 @@ public abstract class GeneratorBase<TRequest> : ISourceGenerator
         var compilationUnit = Chain.Process(request).NormalizeWhitespace();
         var fileName = GetFileName(context, node, request);
 
-        context.AddSource(fileName, compilationUnit.ToString());
+        context.AddSource(fileName, compilationUnit.ToFullString());
     }
 }

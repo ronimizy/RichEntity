@@ -26,54 +26,54 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageVersion>1.1.1</PackageVersion>
-        <PackageReleaseNotes>Added support for recursive key properties.</PackageReleaseNotes>
+        <PackageVersion>1.1.2</PackageVersion>
+        <PackageReleaseNotes>Added auto generated file header.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
-        <None Include="..\LICENSE.md" Pack="true" PackagePath="\"/>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\LICENSE.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentChaining" Version="1.0.3" GeneratePathProperty="true" PrivateAssets="all"/>
-        <PackageReference Include="FluentScanning" Version="1.1.1" GeneratePathProperty="true" PrivateAssets="all"/>
-        <PackageReference Include="FluentScanning.DependencyInjection" Version="1.1.2" GeneratePathProperty="true" PrivateAssets="all"/>
+        <PackageReference Include="FluentChaining" Version="1.0.3" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="FluentScanning" Version="1.1.1" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="FluentScanning.DependencyInjection" Version="1.1.2" GeneratePathProperty="true" PrivateAssets="all" />
 
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" GeneratePathProperty="true" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" GeneratePathProperty="true" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" GeneratePathProperty="true" PrivateAssets="all" />
 
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.2.0" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.2.0" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.2.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.2.0" PrivateAssets="all" />
 
-        <PackageReference Include="Sigil" Version="5.0.0" GeneratePathProperty="true" PrivateAssets="all"/>
-        <PackageReference Include="System.Reflection.Emit" Version="4.7.0" GeneratePathProperty="true" PrivateAssets="all"/>
-        <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" GeneratePathProperty="true" PrivateAssets="all"/>
-        <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" GeneratePathProperty="true" PrivateAssets="all"/>
+        <PackageReference Include="Sigil" Version="5.0.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Reflection.Emit" Version="4.7.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" GeneratePathProperty="true" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath=""/>
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(OutputPath)\RichEntity.Annotations.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(OutputPath)\RichEntity.Annotations.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 
-        <None Include="$(PkgFluentChaining)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(PkgFluentScanning)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(PkgFluentScanning_DependencyInjection)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(PkgFluentChaining)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(PkgFluentScanning)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(PkgFluentScanning_DependencyInjection)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 
-        <None Include="$(PkgMicrosoft_Extensions_DependencyInjection)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(PkgMicrosoft_Extensions_DependencyInjection_Abstractions)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(PkgMicrosoft_Extensions_DependencyInjection)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(PkgMicrosoft_Extensions_DependencyInjection_Abstractions)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 
-        <None Include="$(PkgSigil)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(PkgSystem_Reflection_Emit)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(PkgSystem_Reflection_Emit_ILGeneration)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
-        <None Include="$(PkgSystem_Reflection_Emit_Lightweight)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(PkgSigil)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(PkgSystem_Reflection_Emit)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(PkgSystem_Reflection_Emit_ILGeneration)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(PkgSystem_Reflection_Emit_Lightweight)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\RichEntity.Annotations\RichEntity.Annotations.csproj"/>
+        <ProjectReference Include="..\RichEntity.Annotations\RichEntity.Annotations.csproj" />
     </ItemGroup>
 
 </Project>
